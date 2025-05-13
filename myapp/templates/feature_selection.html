@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Séléction des variables</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        color: #333;
+      }
+      div.container.content{
+        margin-left: 350px;
+      }
+      div.container {
+        margin-top: 10px;
+        margin-left: 180px;
+        max-width:80%;
+        padding: 2rem;
+        }
+        .container {
+        padding-left: 200px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      h1,
+      h2 {
+        color: #333;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #d4af37;
+        padding-bottom: 10px;
+      }
+      h1 {
+        color: #f4c542;
+      }
+      h2 {
+        color: #333;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      label {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button[type="submit"] {
+        background-color: #f4c542;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      button[type="submit"]:hover {
+        background-color: #e1b52e;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #333;
+        color: #d4af37;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      /*img {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 20px;
+      }*/
+      .highlight {
+        color: #f4c542 !important;
+      }
+      #cible {
+        color: #222;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    {% extends 'base.html' %} {% block title %}Feature Selection{% endblock %}
+    {% block content %}
+    <div class="container">
+      <h1 style="color: #d4af37 !important; text-align: center">
+        Sélection des variables
+      </h1>
+      <!-- <h2>Choisir La Colonne Cible</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="target_column">Selectionner la Colonne Cible:</label>
+            <select name="target_column" id="target_column">
+                {% for column in uploaded_data.columns %}
+                    <option value="{{ column }}">{{ column }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Exécuter Les Calcules</button>
+        </form> -->
+      {% if current_column %}
+      <div id="cible">Colonne cible actuelle : {{ current_column }}</div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit">Exécuter Les Calculs</button>
+      </form>
+      {% if message %}
+      <div class="alert alert-info" role="alert">{{ message }}</div>
+      {% endif %} {% if anova_results is not None %}
+      <h3>Analyse de dépendence entre les variables catégorielles et la variable cible </h3>
+      <hr/>
+      <p>
+        Le Test ANOVA est utilisé pour étudier le rapport de dépendance d'une
+        variable quantitative à une variable qualitative.
+      </p>
+      <p>
+        P-value > 0,05 : acceptation de H0 donc le défaut ne dépend pas de la
+        variable. Cette variable n’est pas importante dans la prédiction.
+      </p>
+      <p>
+        P-value < 0,05 : rejet de H0 donc le critère défaut dépend de la
+        variable. Cette variable est importante dans la prédiction.
+      </p>
+      <table>
+        <thead>
+          <tr style="text-align: center">
+            <th>Feature</th>
+            <!-- <th>Chi2_value</th> -->
+            <th>P_value</th>
+            <th>Independence</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in anova_results.itertuples %}
+          <tr>
+            <td>{{ row.Feature }}</td>
+            <!-- <td>{{ row.Chi2_value }}</td> -->
+            <td>{{ row.P_value|floatformat:2 }}</td>
+            <td>{{ row.Independence }}</td>
+            <td>
+              <form method="post" action="{% url 'feature_selection' %}">
+                {% csrf_token %}
+                <input
+                  type="hidden"
+                  name="column_to_remove"
+                  value="{{ row.Feature }}"
+                />
+                <button type="submit" class="btn btn-danger btn-sm">
+                  Supprimer
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %} {% if iv_results is not None %}
+      <h3>Analyse de dépendence entre les variables numériques et la variable cible </h3>
+      <p>
+        L’information Value est une technique très utilisée dans la
+        sélection des variables .
+      </p>
+      <p>
+        Quand L’information Value (IV) augmente, la puissance prédictive du
+        variable augmente.
+      </p>
+      <p>
+        On élimine les variables qui ont une IV < 0,1. Pour un pouvoir prédictif
+        puissant, il faut que l’IV > 0,3.
+      </p>
+      <table>
+        <thead>
+          <tr style="text-align: center">
+            <th>Feature</th>
+            <th>IV</th>
+            <th>Category</th>
+            <!-- <th>Binned Feature</th> -->
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in iv_results.itertuples %}
+          <tr>
+            <td>{{ row.Feature }}</td>
+            <td>{{ row.IV|floatformat:2 }}</td>
+            <td>{{ row.Category }}</td>
+            <!-- <td>{{ row.Binned_Feature }}</td> -->
+            <td>
+              <form method="post" action="{% url 'feature_selection' %}">
+                {% csrf_token %}
+                <input type="hidden" name="column_to_remove" value="{{ row.Feature }}" />
+                <button type="submit" class="btn btn-danger btn-sm"> Supprimer </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %} 
+      {% if correlation_plot %}
+      <h2> Matrice de Corrélation</h2>
+      <p>
+        La corrélation est un coefficient qui mesure la dépendance linéaire
+        entre les variables.
+      </p>
+      <img src="{{ correlation_plot }}" alt="Correlation Matrix" />
+      {% endif %}
+    </div>
+
+    <!-- {% if correlated_variables %}
+    <h3>Variables Corrélées</h3>
+    <div>{{ correlated_variables|safe }}</div>
+    {% endif %} -->
+    {% if correlated_pairs %}
+    <h2>Variables Corrélées</h2>
+    <table>
+        <thead>
+            <tr style="text-align: center">
+                <th>Variables</th>
+                <th>Corrélation</th>
+                <th>Colonne a Supprimer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pair in correlated_pairs %}
+                <tr >
+                    <td>{{ pair.var1 }} ({{ pair.iv1 }}) | {{ pair.var2 }} ({{ pair.iv2 }})</td>
+                    <td>{{ pair.correlation }}</td>
+                    <td>
+                        <form method="post" action="{% url 'feature_selection' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <select name="column_to_remove">
+                                <option value="{{ pair.var1 }}">{{ pair.var1 }}</option>
+                                <option value="{{ pair.var2 }}">{{ pair.var2 }}</option>
+                            </select>
+                            <button type="submit">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p> </p>
+    {% endif %}
+
+    {% endblock %}
+  </body>
+</html>

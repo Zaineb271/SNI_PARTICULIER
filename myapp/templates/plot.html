@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualization</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+
+        div.container {
+            margin-top: 10px;
+            max-width: 80%;
+            margin-left: 200px;
+            padding: 2rem;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            background-color: #222;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: #030303;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .btn-custom {
+            background-color: #d4af37;
+            color: #222;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .btn-custom:hover {
+            background-color: #b58e2b;
+            color: #fff;
+        }
+        .plot-img {
+            width: 60%;
+            max-width: 60%;
+            height: 60%;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 1px;
+            margin-left: 20%;
+            margin-bottom: 20px;
+        }
+        .alert {
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        #cible {
+            
+            color: #222;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block title %}Plot Selection{% endblock %}
+
+    {% block content %}
+    <div class="container">
+        <h1 class="text-center" style="color: #d4af37">Choix des Visualisation</h1>
+    
+        <div class="card mt-4">
+            <div class="card-body">
+                <!-- {% if current_column %}
+                <div id="cible">
+                    Colonne cible actuelle : {{ current_column }}
+                </div>
+                {% endif %} -->
+                <!-- <h2>Plot Pie Chart</h2>
+                <form method="post" class="mb-4">
+                    {% csrf_token %} 
+
+                    {{ current_column }}
+                    {{ categorical_column_selection_form.as_p }}
+                    <button type="submit" name="plot_pie_chart" class="btn btn-custom">Plot</button>
+                </form>
+                <div class="row">
+                    {% for plot in pie_chart_plots %}
+                    <div class="col-md-12">
+                        <img src="{{ plot }}" alt="Plot" class="plot-img img-fluid" />
+                    </div>
+                    {% endfor %}
+                </div> -->
+                <h2>Visualisation de diagramme circulaire</h2>
+                <form method="post" class="mb-4">
+                    {% csrf_token %}
+                    <p id="cible">
+                        {% if target_column %}
+                            Colonne cible actuelle : {{ target_column }}
+                        {% endif %}
+                    </p>
+                    <button type="submit" name="plot_pie_chart" class="btn btn-custom">Visualisation</button>
+                </form>
+                
+                <div class="row">
+                    {% for plot in pie_chart_plots %}
+                    <div class="col-md-12">
+                        <img src="{{ plot }}" alt="Plot" class="plot-img img-fluid" />
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2>Visualisation de la distribution catégorielle</h2>
+                <form method="post" class="mb-4">
+                    {% csrf_token %} 
+                    {{ categorical_column_selection_form.as_p }}
+                    <button type="submit" name="plot_categorical_distribution" class="btn btn-custom">Visualisation</button>
+                </form>
+                <div class="row">
+                    {% for plot in categorical_distribution_plots %}
+                    <div class="col-md-12">
+                        <img src="{{ plot }}" alt="Plot" class="plot-img img-fluid" />
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2>Visualisation de la distribution numérique</h2>
+                <form method="post" class="mb-4">
+                    {% csrf_token %} 
+                   {{ numeric_column_selection_form.as_p }}
+                 
+                    <button type="submit" name="plot_numeric_distribution" class="btn btn-custom">Visualisation</button>
+                </form>
+                <div class="row">
+                    {% for plot in numeric_distribution_plots %}
+                    <div class="col-md-12">
+                        <img src="{{ plot }}" alt="Plot" class="plot-img img-fluid" />
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% endblock %}
+</body>
+</html>

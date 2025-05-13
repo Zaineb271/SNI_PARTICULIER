@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Téléchargement</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 2rem;
+            background-color: #403f3fd4;
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        .container h1 {
+            color: #d4af37;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .container p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .form-group label {
+            font-size: 1rem;
+            color: #d4af37;
+        }
+        .form-control-file {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+        }
+        .btn-custom {
+            background-color: #d4af37;
+            color: #222;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .btn-custom:hover {
+            background-color: #b58e2b;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block title %}Upload File{% endblock %}
+
+    {% block content %}
+        <div class="container mt-5 mb-5 text-center pt-5 pb-5">
+            <h1 class="display-4 mb-4">Télécharger un fichier Excel</h1>
+            <p class="lead">Choisir un fichier Excel pour le téléchargement.</p>
+            <form action="{% url 'upload_file' %}" method="post" enctype="multipart/form-data"> 
+                {% csrf_token %}
+                <div class="form-group mb-4">
+                    <label for="file">Choisir un fichier:</label>
+                    <input type="file" id="file" name="file" class="form-control-file mt-2 mb-2">
+                </div>
+                <button type="submit" class="btn btn-custom"> Télécharger </button>
+            </form>
+        </div>
+    {% endblock %}
+</body>
+</html>

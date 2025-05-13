@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transition Matrix Heatmap</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        color: #333;
+      }
+      div.container.content{
+        margin-left: 350px;
+      }
+      div.container {
+        margin-top: 10px;
+        margin-left: 180px;
+        max-width:80%;
+        padding: 2rem;
+        }
+        .container {
+        padding-left: 200px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      h1,
+      h2 {
+        color: #333;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #d4af37;
+        padding-bottom: 10px;
+      }
+      h1 {
+        color: #f4c542;
+      }
+      h2 {
+        color: #333;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      label {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button[type="submit"] {
+        background-color: #f4c542;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      button[type="submit"]:hover {
+        background-color: #e1b52e;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #333;
+        color: #d4af37;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    {% extends 'base.html' %} 
+    
+    {% block title %}Transition Matrix Heatmap{% endblock %} 
+    
+    {%block content %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="mb-4 text-center" style="color: #d4af37">
+                        Matrice de Transition de Propabilité de Defaut entre l'année N et N+1
+                    </h2>
+                    <div class="card">
+                            
+
+                            <form method="POST">
+                            {% csrf_token %}
+                            <button type="submit">Générer la Matrice de Transition</button>
+                            </form>
+
+                            
+
+                            <div>
+                                {% if transaction_matrix %}
+                                <h4>Matrice de Transition</h4>
+                                <p>
+                                    La matrice de transition est générée entre L'année
+                                    'N' et 'N+1'.
+                                </p>
+                                <img
+                                    src="{{ transaction_matrix }}"
+                                    alt="Transition Matrix Heatmap"
+                                />
+                                {% endif %}
+                            </div>
+                        </div>
+                    
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+  </body>
+</html>

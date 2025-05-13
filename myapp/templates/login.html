@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fcf9f9fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .header-title {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 35px;
+            font-weight: bold;
+            color:#d4af37;
+        }
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(17, 15, 15, 0.1);
+            display: flex;
+        }
+        
+        .login-form {
+            margin-right: 20px;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #d4af37;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-form button:hover {
+            background-color: #555;
+        }
+        .login-image {
+            max-width: 500px;
+        }
+        .alert {
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-info {
+            background-color: #cce5ff;
+            color: #004085;
+            border-color: #b8daff;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="header-title">Bienvenue Sur Notre Systéme De Notation Interne</h1>
+    <div class="login-container">
+        <div class="login-form">
+            <form method="post">
+                {% csrf_token %}
+                <h2>Connexion</h2>
+                <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+                <input type="password" name="password" placeholder="Mot de passe" required>
+                <button type="submit">  Connexion</button>
+            </form>
+            <p></p>
+            <!-- Message statique pour contacter l'administration -->
+            <div class="alert alert-info mt-3">
+                En cas de problème, veuillez contacter l'administration.
+            </div>
+        </div>
+        <div>
+            <img src="/media/bfi.jpg" alt="Login Image" class="login-image">
+        </div>
+    </div>
+</body>
+</html>

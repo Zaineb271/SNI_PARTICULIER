@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vision 360° du portefeuille risque</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        color: #333;
+      }
+      div.container.content {
+        margin-left: 350px;
+      }
+      div.container {
+        margin-top: 10px;
+        margin-left: 180px;
+        max-width: 80%;
+        padding: 2rem;
+      }
+      .container {
+        padding-left: 200px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      h1,
+      h2 {
+        color: #333;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #d4af37;
+        padding-bottom: 10px;
+        text-align: center;
+      }
+      h1 {
+        color: #f4c542;
+      }
+      h2 {
+        color: #333;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      label {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button[type="submit"] {
+        background-color: #f4c542;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      button[type="submit"]:hover {
+        background-color: #e1b52e;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        margin-right: 0px;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #333;
+        color: #d4af37;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+
+      table {
+        width: 60%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+    
+      th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ccc;
+      }
+    
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+    
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+    
+      td:first-child {
+        font-weight: bold;
+        color: #333;
+      }
+    
+      td:last-child {
+        text-align: right;
+        color: #004085;
+      }
+    
+      caption {
+        caption-side: top;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #0056b3;
+      }
+    </style>
+  </head>
+
+  <body>
+    {% extends 'base.html' %}
+    {% block title %}Vision 360° du portefeuille risque{% endblock %}
+    {% block content %}
+       
+    <h1>Résumé du portefeuille</h1>
+    <table>
+      <tr><td>Nombre de dossiers</td><td>{{ recap.nb_total_dossiers }}</td></tr>
+      <tr><td>EAD Total</td><td>{{ recap.ead_total }}</td></tr>
+      <tr><td>ECL Total</td><td>{{ recap.ecl_total }}</td></tr>
+      <tr><td>UL Total</td><td>{{ recap.ul_total }}</td></tr>
+      <tr><td>RWA Total</td><td>{{ recap.rwa_total }}</td></tr>
+      <tr><td>Fonds Propres à réserver (8%)</td><td>{{ recap.fonds_propres_total }}</td></tr>
+      <tr><td>PD Moyenne (%)</td><td>{{ recap.pd_moyenne }} %</td></tr>
+      <tr><td>LGD Moyenne </td><td>{{ recap.lgd_moyenne }} </td></tr>
+      <tr><td>Taux de provision global</td><td>{{ recap.taux_prov_global }} %</td></tr>
+    </table>
+    
+    <h1>Répartition par niveau de risque</h1>
+    <div style="text-align:center;">
+        <img src="data:image/png;base64,{{ risk_level_plot }}" alt="Répartition par classe de risque" style="max-width: 100%; height: auto;"/>
+    </div>
+    
+      <h1 >Vision 360° du portefeuille</h1>
+      {% if message %}
+        <p>{{ message }}</p>
+      {% endif %}
+    
+      {% if combined_list %}
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>PD 2024</th>
+              <th>Classe de Risque </th>
+              <th>Commentaire</th>
+              <th>LGD</th>
+              <th>EAD</th>
+              <th>ECL</th>  <!-- Nouvelle colonne ECL -->
+              <th>UL</th>   <!-- Nouvelle colonne UL -->
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in combined_list %}
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.pd }} %</td>
+                <td>{{ item.level }}</td>
+                <td>{{ item.comment }}</td>
+                <td>{{ item.lgd }}</td>
+                <td>{{ item.ead }}</td>
+                <td>{{ item.ECL }}</td>  <!-- Affichage de l'ECL -->
+                <td>{{ item.UL }}</td>  <!-- Affichage de l'UL -->
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <h1 style="text-align: center; margin-top: 50px;">Indicateurs Risque</h1>
+
+      <!-- Deuxième tableau -->
+      <table >
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ECL</th>
+            <th>Taux de provisionnement</th>
+            <th>RWA</th>
+            <th>UL</th>
+            <th>Fonds Propres à réserver</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in combined_list %}
+            <tr>
+              <td>{{ item.id }}</td>
+              <td>{{ item.ECL }}</td>
+              <td>{{ item.taux_provisionnement }} %</td>
+              <td>{{ item.RWA }}</td>
+              <td>{{ item.UL }}</td>
+              <td>{{ item.fonds_propres }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p>Aucune donnée disponible.</p>
+      {% endif %}
+    {% endblock %}
+    
+  </body>
+  
+</html>

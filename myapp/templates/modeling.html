@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modélisation </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+            color: #333 !important;
+            font-family: Arial, sans-serif;
+        }
+        #cible {
+        color: #222;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        }
+        div.container.content{
+        margin-left: 350px;
+        }
+        div.container {
+            margin-top: 10px;
+            margin-left: 180px;
+            max-width:80%;
+            padding: 2rem;
+            }
+        .container {
+            max-width: 900px;
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #d4af37 !important;
+            padding-bottom: 10px;
+        }
+        .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+        .btn {
+            margin-right: 10px;
+        }
+        .btn-primary {
+            background-color: #f4c542 !important;
+            border-color: #f4c542 !important;
+        }
+        .btn-primary:hover {
+            background-color: #e1b52e !important;
+            border-color: #e1b52e !important;
+        }
+        .btn-secondary {
+            background-color: #333;
+            border-color: #333;
+        }
+        .btn-secondary:hover {
+            background-color: #444;
+            border-color: #444;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+        .btn-info:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+        .table {
+            margin-top: 20px;
+            border-radius: 8px;
+            
+        }
+        .table thead {
+            background-color: #333;
+            color: #d4af37;
+            
+        }
+        .table th, .table td {
+            text-align: center;
+        }
+        .plot-img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 70%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .alert {
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block title %}Modeling{% endblock %}
+
+    {% block content %}
+    {% load custom_filters %}
+    <div class="container">
+        <h1 style="color: #d4af37 !important;"> Modélisation</h1>
+    
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="train_model" value="true">
+            {% if current_column %}
+                <div id="cible">Colonne cible actuelle : {{ current_column }}</div>
+            {% endif %}
+            <div class="form-group">
+                <button type="submit" name="model_with_balance" class="btn btn-primary">Modèle équilibré</button>
+                <button type="submit" name="auto_selection" class="btn btn-info">Sélection automatique des données</button>
+        </form>
+          <!-- Afficher les colonnes sélectionnées par stepwise_selection -->
+          {% if selected_features %}
+          <h2>Colonnes sélectionnées</h2>
+          <table class="table table-bordered">
+              <thead>
+                  <tr>
+                      <th>Numéro</th>
+                      <th>Nom de la Colonne</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for feature in selected_features %}
+                      <tr>
+                          <td>{{ forloop.counter }}</td> <!-- Numéro de la colonne -->
+                          <td>{{ feature }}</td> <!-- Nom de la colonne -->
+                         
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        {% endif %}
+      
+        <!-- Afficher les résultats si le modèle a été entraîné -->
+        {% if summary_table %}
+            <h2>Résumé du modèle</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        {% for key in summary_table.0.keys %}
+                            <th>{{ key }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in summary_table %}
+                        <tr>
+                            {% for value in row.values %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <!-- Formulaire pour afficher les métriques de performance -->
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="metrics_set">Choisir l'ensemble de métriques :</label>
+                <select name="metrics_set" id="metrics_set" class="form-control">
+                    <option value="train">Ensemble d'entraînement</option>
+                    <option value="test">Ensemble de test</option>
+                </select>
+                <button type="submit" name="show_metrics" class="btn btn-info">Afficher les métriques</button>
+            </div>
+        </form>
+        
+        <!-- Afficher les métriques de performance -->
+        {% if performance_metrics %}
+            <h2>Métriques de performance</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Métrique</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for label, metrics in performance_metrics.items %}
+                        {% if label == 'accuracy' or label == 'macro avg' or label == 'weighted avg' %}
+                            <tr>
+                                <td>{{ label }}</td>
+                                <td>{{ metrics|get_item:'f1-score' }}</td>
+                            </tr>
+                        {% else %}
+                            {% for metric, score in metrics.items %}
+                                {% if metric != 'support' %}
+                                    <tr>
+                                        <td>{{ label }} - {{ metric }}</td>
+                                        <td>{{ score }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                Aucune métrique à afficher. Assurez-vous que le modèle a été entraîné correctement.
+            </div>
+        {% endif %}
+        
+        {% if confusion_matrix_plot %}
+            <h2>Matériel de confusion</h2>
+            <img src="{{ confusion_matrix_plot }}" alt="Matériel de confusion" class="plot-img img-fluid">
+        {% endif %}
+        
+    {% endblock %}
+</body>
+</html>

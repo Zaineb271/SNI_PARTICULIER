@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        img.plot-img {
+            width: 200%;
+            max-width: 1000px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .navbar-dark {
+        background-color: #000000;
+        }
+    
+        .navbar-dark .navbar-brand {
+          color: #F8E231;
+        }
+    
+        .navbar-dark .navbar-nav .nav-link {
+          color: #FFFFFF;
+        }
+    
+        .navbar-dark .navbar-nav .nav-link:hover {
+          color: #F8E231;
+        }
+    
+        .navbar-dark .navbar-toggler {
+          border-color: #F8E231;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{% url 'index' %}">
+          <span style="color: #F8E231;">SNI</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'index' %}">
+                <span style="color: #FFFFFF;">Accueil</span>
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'upload_file' %}">
+                <span style="color: #FFFFFF;">Upload</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'overview' %}">
+                <span style="color: #FFFFFF;">Overview</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'plot' %}">
+                <span style="color: #FFFFFF;">Plot selection</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'data_treatment' %}">
+                <span style="color: #FFFFFF;">Prétraitement</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'feature_engineering' %}">
+                <span style="color: #FFFFFF;">Feature Engineering</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'feature_selection' %}">
+                <span style="color: #FFFFFF;">Feature selection</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'modeling' %}">
+                <span style="color: #FFFFFF;">Modeling</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'scoring' %}">
+                <span style="color: #FFFFFF;">Scoring</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

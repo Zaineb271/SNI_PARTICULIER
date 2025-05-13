@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Propabilité de Defaut</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        color: #333;
+      }
+      div.container.content {
+        margin-left: 350px;
+      }
+      div.container {
+        margin-top: 10px;
+        margin-left: 180px;
+        max-width: 80%;
+        padding: 2rem;
+      }
+      .container {
+        padding-left: 200px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      h1,
+      h2 {
+        color: #333;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #d4af37;
+        padding-bottom: 10px;
+      }
+      h1 {
+        color: #f4c542;
+      }
+      h2 {
+        color: #333;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      label {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button[type="submit"] {
+        background-color: #f4c542;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      button[type="submit"]:hover {
+        background-color: #e1b52e;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #333;
+        color: #d4af37;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    {% extends 'base.html' %} 
+    {% block title %} Propabilité de Defaut {%endblock%} 
+    {%block content %}
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="mb-4 text-center" style="color: #d4af37">
+            Performance du Modèle
+          </h2>
+          <div class="card">
+            <h2>📊 Résumé du Modèle</h2>
+            <p>Exactitude du modèle : {{ accuracy }}</p>
+            <p>Rapport de classification :</p>
+            <pre>{{ report }}</pre>
+
+            <h2>📉 Matrice de Confusion :</h2>
+            <img
+              src="data:image/png;base64,{{ cm_image }}"
+              alt="Matrice de Confusion"
+            />
+
+            <h2>📈 Courbe ROC :</h2>
+            <img src="data:image/png;base64,{{ roc_image }}" alt="Courbe ROC" />
+
+
+            <h2>📌 Probabilité de Défaut (PD) estimée pour 2024 :</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>PD 2024 (%)</th>
+                  <th>Classe</th>
+                  <th>Commentaire de risque</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in PD_2024 %}
+                <tr>
+                  <td>{{ row.id }}</td>
+                  <td>{{ row.PD_2024|floatformat:2 }}%</td>
+                  <td>{{ row.level }}</td>
+                  <td>{{ row.comment }}</td>
+              </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+
+            <h2>📌 PD à Vie (Lifetime) estimée :</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>PD Lifetime (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in PD_Lifetime %}
+                <tr>
+                  <td>{{ row.id }}</td>
+                  <td>{{ row.PD_LifeTime }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <h2>📊 Histogramme PD pour 2024 :</h2>
+            <img src="data:image/png;base64,{{ pd_2024_image }}" alt="Histogramme PD 2024" />
+
+            
+           
+
+            <!-- Affichage des résultats de backtesting -->
+            <div class="mt-4">
+              <h3>Backtesting du modèle</h3>
+              <p><strong>Mean Squared Error (MSE):</strong> {{ mse }}</p>
+              <p><strong>R-squared (R²):</strong> {{ r2 }}</p>
+
+              <!-- Affichage du graphique interactif -->
+              <h1>Backtesting entre PD Réelle et PD Prédite</h1>
+              <img src="data:image/png;base64,{{ pd_graph_image }}" alt="Graphique de Backtesting"/>
+          </div>
+
+          <!-- Affichage des corrélations -->
+          <div>
+            <h2>Corrélations pour 2024 :</h2>
+            <ul>
+                <li><strong>Inflation :</strong> {{ correlation_inflation_pd_2024 }}</li>
+                <li><strong>Chômage :</strong> {{ correlation_chomage_pd_2024 }}</li>
+                <li><strong>Croissance :</strong> {{ correlation_croissance_pd_2024 }}</li>
+            </ul>
+        </div>
+        <h2>📌 PD_2024 ajusté selon les scénarios :</h2>
+        <table border="1">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Scénario</th>
+                  <th>PD_2024 Initial</th>
+                  <th>PD_2025 Ajusté</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for row in adjusted_pd %}
+              <tr>
+                <td>{{ row.ID }}</td>
+                <td>{{ row.Scénario }}</td>
+                <td>{{ row.PD_2024_Initial }}</td>
+                <td>{{ row.PD_2024_Ajusté }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
+</html>

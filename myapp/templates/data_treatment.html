@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prétraitement de Données</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .card {
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        .card-header {
+            background-color: #181818d6;
+            color: #d4af37;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            padding: 15px;
+            text-align: center;
+        }
+        .card-body {
+            background-color: #fff;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #d4af37;
+            text-align: center;
+        }
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .btn  {
+            background-color: #d4af37;
+            color: #222;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #ffb400; /* Darker gold color on hover */
+            color: #fff; /* White text color on hover */
+        }
+        .btn-primary, .btn-danger {
+            background-color: inherit;
+            color: #222;
+            border: none;
+        }
+        .btn-primary:hover, .btn-danger:hover {
+            background-color: #ffb400;
+            color: #fff;
+        }
+        .alert {
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #040303;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #181818d6;
+            color: #d4af37;
+        }
+        .section-title {
+            background-color: #181818d6;
+            color: #d4af37;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block title %}Traitement de Données{% endblock %}
+
+    {% block content %}
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1>Traitement de Données</h1>
+            </div>
+            <div class="card-body">
+                <!-- Section pour supprimer une colonne -->
+                <div class="section-title">
+                    <h2>Supprimer une Colonne</h2>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" action="{% url 'data_treatment' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="remove_column">
+                            <div class="form-group">
+                                <label for="column_to_remove">Sélectionner une colonne à supprimer</label>
+                                <select class="form-control" id="column_to_remove" name="column_to_remove">
+                                    {% for column in columns %}
+                                    <option value="{{ column }}">{{ column }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Section pour supprimer les colonnes avec valeurs manquantes -->
+                <div class="section-title">
+                    <h2>Supprimer les Colonnes avec Valeurs Manquantes</h2>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" action="{% url 'data_treatment' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="remove_missing">
+                            <div class="form-group">
+                                <label for="threshold_remove_missing">Seuil de valeurs manquantes (%)</label>
+                                <input type="number" class="form-control" id="threshold_remove_missing" name="threshold_remove_missing" min="0" max="100" step="1" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Appliquer</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Section pour imputer les valeurs manquantes -->
+                <div class="section-title">
+                    <h2>Imputer les Valeurs Manquantes</h2>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" action="{% url 'data_treatment' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="impute_missing">
+                            <button type="submit" class="btn btn-primary">Imputer</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Section pour traiter les outliers -->
+                <div class="section-title">
+                    <h2>Traiter les Outliers</h2>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" action="{% url 'data_treatment' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="treat_outliers">
+                            <div class="form-group">
+                                <label for="threshold_treat_outliers">Seuil d'outliers</label>
+                                <input type="number" class="form-control" id="threshold_treat_outliers" name="threshold_treat_outliers" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="replace_with_treat_outliers">Remplacer par</label>
+                                <select class="form-control" id="replace_with_treat_outliers" name="replace_with_treat_outliers" required>
+                                    <option value="mean">Mean</option>
+                                    <option value="median">Median</option>
+                                    <option value="mode">Mode</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Traiter</button>
+                        </form>
+                    </div>
+                </div>
+
+                {% if message %}
+                <div class="alert alert-info mt-3">{{ message }}</div>
+                {% endif %}
+
+                {% if data_preview %}
+                <div class="section-title">
+                    <h2>Aperçu des Données</h2>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            {{ data_preview|safe }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+</body>
+</html>
