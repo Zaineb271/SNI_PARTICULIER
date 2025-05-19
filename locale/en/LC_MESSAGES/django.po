@@ -1,0 +1,400 @@
+# English translations for SNI_RETAIL project
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-14 12:54+0100\n"
+"PO-Revision-Date: 2025-05-14 12:54+0100\n"
+"Last-Translator: \n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "CARTHAGO SCORING 1.0.0"
+msgstr "CARTHAGO SCORING 1.0.0"
+
+msgid "Welcome admin"
+msgstr "Welcome admin"
+
+msgid "Data Overview"
+msgstr "Data Overview"
+
+msgid "Visualization"
+msgstr "Visualization"
+
+msgid "Feature Selection"
+msgstr "Feature Selection"
+
+msgid "Transition Matrix"
+msgstr "Transition Matrix"
+
+msgid "Modeling"
+msgstr "Modeling"
+
+msgid "Periodic Risk Evaluation"
+msgstr "Periodic Risk Evaluation"
+
+
+msgid "Client File"
+msgstr "Client File"
+
+msgid "Quick Search ..."
+msgstr "Quick Search ..."
+
+msgid "Logo"
+msgstr "Logo"
+
+msgid "User"
+msgstr "User"
+
+msgid "Folder"
+msgstr "Folder"
+
+msgid "Full Data Display"
+msgstr "Full Data Display"
+
+msgid "Data Preview and Preprocessing"
+msgstr "Data Preview and Preprocessing"
+
+msgid "Current Target Variable"
+msgstr "Current Target Variable"
+
+msgid "Descriptive Statistics"
+msgstr "Descriptive Statistics"
+
+msgid "Target Variable Selection"
+msgstr "Target Variable Selection"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Missing Values"
+msgstr "Missing Values"
+
+msgid "Column"
+msgstr "Column"
+
+msgid "Percentage"
+msgstr "Percentage"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Impute with Mode"
+msgstr "Impute with Mode"  
+
+msgid "Impute with Mean"
+msgstr "Impute with Mean"  
+
+msgid "Impute with Median"
+msgstr "Impute with Median"
+
+msgid "Visualization Choices"
+msgstr "Visualization Choices"
+
+msgid "Pie Chart Visualization"
+msgstr "Pie Chart Visualization"
+
+msgid "Categorical Distribution Visualization"
+msgstr "Categorical Distribution Visualization"
+
+msgid "Numerical Distribution Visualization"
+msgstr "Numerical Distribution Visualization"
+
+msgid "Visualize"
+msgstr "Visualize"
+
+msgid "Current Target Column"
+msgstr "Current Target Column"
+
+msgid "Run Calculations"
+msgstr "Run Calculations"
+
+msgid "Dependency Analysis between Categorical Variables and Target Variable"
+msgstr "Dependency Analysis between Categorical Variables and Target Variable"
+
+msgid "The ANOVA test is used to study the dependency relationship of a quantitative variable to a qualitative variable."
+msgstr "The ANOVA test is used to study the dependency relationship of a quantitative variable to a qualitative variable."
+
+msgid "P-value > 0.05: acceptance of H0, so the default does not depend on the variable. This variable is not important in prediction."
+msgstr "P-value > 0.05: acceptance of H0, so the default does not depend on the variable. This variable is not important in prediction."
+
+msgid "P-value < 0.05: rejection of H0, so the default criterion depends on the variable. This variable is important in prediction."
+msgstr "P-value < 0.05: rejection of H0, so the default criterion depends on the variable. This variable is important in prediction."
+
+msgid "Variables"
+msgstr "Variables"
+
+msgid "P_value"
+msgstr "P_value"
+
+msgid "Independence"
+msgstr "Independence"
+
+msgid "Dependency Analysis between Numerical Variables and Target Variable"
+msgstr "Dependency Analysis between Numerical Variables and Target Variable"
+
+msgid "Information Value is a widely used technique in variable selection."
+msgstr "Information Value is a widely used technique in variable selection."
+
+msgid "When Information Value (IV) increases, the predictive power of the variable increases."
+msgstr "When Information Value (IV) increases, the predictive power of the variable increases."
+
+msgid "We eliminate variables with an IV < 0.1. For strong predictive power, IV > 0.3 is required."
+msgstr "We eliminate variables with an IV < 0.1. For strong predictive power, IV > 0.3 is required."
+
+msgid "IV"
+msgstr "IV"
+
+msgid "Category"
+msgstr "Category"
+
+msgid "Correlation Matrix"
+msgstr "Correlation Matrix"
+
+msgid "Correlation is a coefficient that measures the linear dependency between variables."
+msgstr "Correlation is a coefficient that measures the linear dependency between variables."
+
+msgid "Correlated Variables"
+msgstr "Correlated Variables"
+
+msgid "Correlation"
+msgstr "Correlation"
+
+msgid "Column to Delete"
+msgstr "Column to Delete"
+
+msgid "Transition Matrix in Heatmap"
+msgstr "Transition Matrix in Heatmap"
+
+msgid "Transition Matrix of Default Probability between Year N and N+1"
+msgstr "Transition Matrix of Default Probability between Year N and N+1"
+
+msgid "Generate Transition Matrix"
+msgstr "Generate Transition Matrix"
+
+
+msgid "The transition matrix is generated between Year 'N' and 'N+1'."
+msgstr "The transition matrix is generated between Year 'N' and 'N+1'."
+
+msgid "Default Probability"
+msgstr "Default Probability"
+
+msgid "Model Performance"
+msgstr "Model Performance"
+
+msgid "Model Summary"
+msgstr "Model Summary"
+
+msgid "Model Accuracy: {{ accuracy }}"
+msgstr "Model Accuracy: {{ accuracy }}"
+
+msgid "Classification Report"
+msgstr "Classification Report"
+
+msgid "Confusion Matrix"
+msgstr "Confusion Matrix"
+
+msgid "ROC Curve"
+msgstr "ROC Curve"
+
+msgid "Estimated Default Probability for 2024"
+msgstr "Estimated Default Probability for 2024"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "PD 2024"
+msgstr "PD 2024"
+
+msgid "Risk Class"
+msgstr "Risk Class"
+
+msgid "Risk Comment"
+msgstr "Risk Comment"
+
+msgid "Estimated Lifetime PD"
+msgstr "Estimated Lifetime PD"
+
+msgid "PD Lifetime"
+msgstr "PD Lifetime"
+
+msgid "PD Histogram for 2024"
+msgstr "PD Histogram for 2024"
+
+msgid "Model Backtesting"
+msgstr "Model Backtesting"
+
+msgid "Mean Squared Error (MSE):"
+msgstr "Mean Squared Error (MSE):"
+
+msgid "R-squared (R²):"
+msgstr "R-squared (R²):"
+
+msgid "Backtesting between Actual PD and Predicted PD"
+msgstr "Backtesting between Actual PD and Predicted PD"
+
+msgid "Correlations for 2024"
+msgstr "Correlations for 2024"
+
+msgid "Inflation"
+msgstr "Inflation"
+
+msgid "Unemployment"
+msgstr "Unemployment"
+
+msgid "Growth"
+msgstr "Growth"
+
+msgid "PD_2024 adjusted based on scenarios"
+msgstr "PD_2024 adjusted based on scenarios"
+
+msgid "PD"
+msgstr "PD"
+
+msgid "Scenario"
+msgstr "Scenario"
+
+msgid "PD_2024 Initial"
+msgstr "PD_2024 Initial"
+
+msgid "PD_2025 Adjusted"
+msgstr "PD_2025 Adjusted"
+
+msgid "Loss Given Default"
+msgstr "Loss Given Default"
+
+msgid "Loss Given Default Rate"
+msgstr "Loss Given Default Rate"
+
+msgid "LGD Results"
+msgstr "LGD Results"
+
+msgid "LGD Model Results"
+msgstr "LGD Model Results"
+
+msgid "Classification - Report"
+msgstr "Classification - Report"
+
+msgid "Model Errors"
+msgstr "Model Errors"
+
+msgid "MAE:"
+msgstr "MAE:"
+
+msgid "MSE:"
+msgstr "MSE:"
+
+msgid "RMSE:"
+msgstr "RMSE:"
+
+msgid "R² Score:"
+msgstr "R² Score:"
+
+msgid "LGD Predictions"
+msgstr "LGD Predictions"
+
+msgid "LGD Distribution"
+msgstr "LGD Distribution"
+
+msgid "LGD"
+msgstr "LGD"
+
+msgid "Exposure at Default"
+msgstr "Exposure at Default"
+
+msgid "CCF and EAD Values"
+msgstr "CCF and EAD Values"
+
+msgid "EAD"
+msgstr "EAD"
+
+msgid "360° Risk Portfolio View"
+msgstr "360° Risk Portfolio View"
+
+msgid "Portfolio Summary"
+msgstr "Portfolio Summary"
+
+msgid "Number of Files"
+msgstr "Number of Files"
+
+msgid "Total EAD"
+msgstr "Total EAD"
+
+msgid "Total ECL"
+msgstr "Total ECL"
+
+msgid "Total UL"
+msgstr "Total UL"
+
+msgid "Total RWA"
+msgstr "Total RWA"
+
+msgid "Capital to Reserve"
+msgstr "Capital to Reserve"
+
+msgid "Average PD"
+msgstr "Average PD"
+
+msgid "Average LGD"
+msgstr "Average LGD"
+
+msgid "Global Provision Rate"
+msgstr "Global Provision Rate"
+
+msgid "Distribution by Risk Level"
+msgstr "Distribution by Risk Level"
+
+msgid "ECL"
+msgstr "ECL"
+
+msgid "UL"
+msgstr "UL"
+
+msgid "Risk Indicators"
+msgstr "Risk Indicators"
+
+msgid "Provisioning Rate"
+msgstr "Provisioning Rate"
+
+
+msgid "RWA"
+msgstr "RWA"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Please provide a client ID."
+msgstr "Please provide a client ID."
+
+msgid "Identification"
+msgstr "Identification"
+
+msgid "Rating according to IFRS 9"
+msgstr "Rating according to IFRS 9"
+
+msgid "Data Overview and Preprocessing"
+msgstr "Data Overview and Preprocessing"
+
+msgid "Database Dimensions"
+msgstr "Database Dimensions"
+
+msgid "Very Good"
+msgstr "Very Good"
+
+msgid "Good"
+msgstr "Good"
+
+msgid "Average"
+msgstr "Average"
+
+msgid "To observe"
+msgstr "To observe"
+
+msgid "Excellent"
+msgstr "Excellent"

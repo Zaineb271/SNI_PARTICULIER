@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Transition Matrix Heatmap</title>
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -89,82 +88,175 @@
       tr:nth-child(even) {
         background-color: #f9f9f9;
       }
+           .pagination {
+    justify-content: flex-end; /* Aligns items to the right */
+    margin: 20px 0;
+}
+      .pagination .page-item.active .page-link {
+        background-color: #636260;
+        border-color: #4d4c4c;
+        color: #333;
+      }
+      .pagination .page-link {
+        color: #333;
+      }
+      .pagination .page-link:hover {
+        background-color: #83827f;
+        color: #fff;
+      }
     </style>
   </head>
   <body>
-    {% extends 'base.html' %} 
-    {% block title %} Propabilité de Defaut {%endblock%} 
-    {%block content %}
-    <div class="container">
-      <div class="row">
+   {% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Loss Given Default Rate" %}
+{% endblock %}
+
+{% block content %}
+<div >
+    <div class="row">
         <div class="col-md-12">
-          <h2 class="mb-4 text-center" style="color: #d4af37">
-            Résultats du LGD 
-          </h2>
-          <div class="card">
-            <h1>Résultats du Modèle LGD</h1>
+            <h2 class="mb-4 text-center" style="color: #d4af37">
+                {% trans "LGD Results" %}
+            </h2>
+            <div class="card">
+                <h1>{% trans "LGD Model Results" %}</h1>
 
-            {% if error %}
-                <p style="color: red;">{{ error }}</p>
-            {% endif %}
+                {% if error %}
+                    <p style="color: red;">{{ error }}</p>
+                {% endif %}
 
-            <h2>Classification - Rapport</h2>
-            <pre>{{ accuracy }}</pre>
+                <h2>{% trans "Classification - Report" %}</h2>
+                <pre>{{ accuracy }}</pre>
 
-            <h2>Matrice de Confusion</h2>
-            
-            <img
-              src="data:image/png;base64,{{ cm_image }}"
-              alt="Matrice de Confusion"
-            />
+                <h2>{% trans "Confusion Matrix" %}</h2>
+                <img src="data:image/png;base64,{{ cm_image }}" alt="{% trans 'Confusion Matrix' %}" />
 
-            <h2>Erreurs du Modèle</h2>
-            <p>MAE: {{ mae }}</p>
-            <p>MSE: {{ mse }}</p>
-            <p>RMSE: {{ rmse }}</p>
-            <p>R² Score: {{ r2 }}</p>
+                <h2>{% trans "Model Errors" %}</h2>
+                <p>{% trans "MAE:" %} {{ mae }}</p>
+                <p>{% trans "MSE:" %} {{ mse }}</p>
+                <p>{% trans "RMSE:" %} {{ rmse }}</p>
+                <p>{% trans "R² Score:" %} {{ r2 }}</p>
 
-            <h2>Prédictions du LGD</h2>
-            
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Prédictions du LGD</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for row in context %}
-                <tr>
-                  <td>{{row.id}}</td>
-                  <td>{{ row.y_comb }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+                <h2>{% trans "LGD Predictions" %}</h2>
+                <table>
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th>{% trans "ID" %}</th>
+                            <th>{% trans "LGD Predictions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in context %}
+                        <tr>
+                            <td style="text-align: center;">{{ row.id }}</td>
+                            <td style="text-align: center;">{{ row.y_comb|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-            <h2>Distribution du LGD </h2>
-            
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>LGD</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for row in contextLGD %}
-                <tr>
-                  <td>{{row.id}}</td>
-                  <td>{{ row.LGD_distribution }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
+                <!-- Pagination for LGD Predictions -->
+                {% if predictions_page_obj.has_other_pages %}
+                <nav aria-label="{% trans 'Pagination' %}">
+                    <ul class="pagination justify-content-center">
+                        {% if predictions_page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?predictions_page={{ predictions_page_obj.previous_page_number }}{% if lgd_distribution_page_obj.number %}&lgd_distribution_page={{ lgd_distribution_page_obj.number }}{% endif %}" aria-label="{% trans 'Previous' %}">
+                                <span aria-hidden="true">«</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">«</span>
+                        </li>
+                        {% endif %}
+
+                        {% for num in predictions_page_obj.paginator.page_range %}
+                            {% if num >= predictions_page_obj.number|add:-1 and num <= predictions_page_obj.number|add:1 %}
+                            <li class="page-item {% if predictions_page_obj.number == num %}active{% endif %}">
+                                <a class="page-link" href="?predictions_page={{ num }}{% if lgd_distribution_page_obj.number %}&lgd_distribution_page={{ lgd_distribution_page_obj.number }}{% endif %}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if predictions_page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?predictions_page={{ predictions_page_obj.next_page_number }}{% if lgd_distribution_page_obj.number %}&lgd_distribution_page={{ lgd_distribution_page_obj.number }}{% endif %}" aria-label="{% trans 'Next' %}">
+                                <span aria-hidden="true">»</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">»</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                <h2>{% trans "LGD Distribution" %}</h2>
+                <table>
+                    <thead>
+                        <tr style="text-align: center;">
+                            <th>{% trans "ID" %}</th>
+                            <th>{% trans "LGD" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in contextLGD %}
+                        <tr>
+                            <td style="text-align: center;">{{ row.id }}</td>
+                            <td style="text-align: center;">{{ row.LGD_distribution|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination for LGD Distribution -->
+                {% if lgd_distribution_page_obj.has_other_pages %}
+                <nav aria-label="{% trans 'Pagination' %}">
+                    <ul class="pagination justify-content-center">
+                        {% if lgd_distribution_page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?lgd_distribution_page={{ lgd_distribution_page_obj.previous_page_number }}{% if predictions_page_obj.number %}&predictions_page={{ predictions_page_obj.number }}{% endif %}" aria-label="{% trans 'Previous' %}">
+                                <span aria-hidden="true">«</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">«</span>
+                        </li>
+                        {% endif %}
+
+                        {% for num in lgd_distribution_page_obj.paginator.page_range %}
+                            {% if num >= lgd_distribution_page_obj.number|add:-1 and num <= lgd_distribution_page_obj.number|add:1 %}
+                            <li class="page-item {% if lgd_distribution_page_obj.number == num %}active{% endif %}">
+                                <a class="page-link" href="?lgd_distribution_page={{ num }}{% if predictions_page_obj.number %}&predictions_page={{ predictions_page_obj.number }}{% endif %}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if lgd_distribution_page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?lgd_distribution_page={{ lgd_distribution_page_obj.next_page_number }}{% if predictions_page_obj.number %}&predictions_page={{ predictions_page_obj.number }}{% endif %}" aria-label="{% trans 'Next' %}">
+                                <span aria-hidden="true">»</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">»</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
         </div>
-      </div>
     </div>
-    {% endblock %}
+</div>
+{% endblock %}
   </body>
 </html>

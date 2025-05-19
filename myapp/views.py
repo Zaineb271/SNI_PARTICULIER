@@ -390,7 +390,8 @@ def plot_selection_view(request):
 #         message = None  # Initialisation du message à None
 #         anova_results = None
 #         iv_results = None
-#         correlation_plot = None
+#         
+# = None
 
 #         if request.method == "POST":
 #             # Vérifier si une colonne doit être supprimée
@@ -1176,21 +1177,24 @@ import plotly.express as px
 import json 
 from django.http import JsonResponse
 
+from django.utils.translation import gettext_lazy as _
+
 def get_risk_level_and_comment(pd_value):
     """
-    Évalue le niveau de risque et retourne un commentaire basé sur la PD projetée.
+    Evaluates the risk level and returns a comment based on the projected PD.
     """
     if pd_value >= 0.5000:  # Use pd here instead of PD_2024
-        return 5, "A surveiller"
+        return 5, _("To observe")
     elif pd_value >= 0.2689:
-        return 4, "Moyen"
+        return 4, _("Average")
     elif pd_value >= 0.0474:
-        return 3, "Bon"
+        return 3, _("Good")
     elif pd_value >= 0.0025:
-        return 2, "Très Bon"
+        return 2, _("Very Good")
     else:
-        return 1, "Excellent"
- 
+        return 1, _("Excellent")
+    
+
 def store_id_pd2024_in_list(id_column, pd_2024_column):
     """
     Cette méthode permet de stocker les ID et PD_2024 dans une liste de tuples.
@@ -1207,6 +1211,10 @@ def store_id_pd2024_in_list(id_column, pd_2024_column):
         print("Erreur lors du stockage des données id et PD_2024 dans la liste :", e)
         return []
 
+
+
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from io import StringIO
 import pandas as pd
 import numpy as np
@@ -1223,7 +1231,6 @@ import io
 import base64
 from django.shortcuts import render, redirect
 from sklearn.metrics import mean_squared_error, r2_score
-
 
 def pd_view(request):
     if "uploaded_data" not in request.session:
@@ -1266,14 +1273,14 @@ def pd_view(request):
         print("NaN après traitement :", X_train.isna().sum().sum())
 
         # Dimensionality reduction with PCA
-        n_components = min(50, X_train.shape[1])  # Limit to 50 components or fewer
+        n_components = min(50, X_train.shape[1])
         pca = PCA(n_components=n_components)
         X_train_pca = pca.fit_transform(X_train)
         X_test_pca = pca.transform(X_test)
         print(f"PCA reduced features to {n_components}")
 
-        # Apply SMOTE with reduced sampling
-        smote = SMOTE(sampling_strategy=0.5, random_state=42)  # Generate fewer synthetic samples
+        # Apply SMOTE
+        smote = SMOTE(sampling_strategy=0.5, random_state=42)
         X_train_resampled, y_train_resampled = smote.fit_resample(X_train_pca, y_train)
 
         # Feature selection
@@ -1332,9 +1339,8 @@ def pd_view(request):
 
         # Finalize PD_2024
         PD_2024 = X_test_copy[['id', 'PD_12mois', 'level', 'comment']].rename(columns={
-            'PD_12mois': 'PD_2024', 'level': 'Classe de risque', 'comment': 'Commentaire de risque'
+            'PD_12mois': 'PD_2024', 'level': 'level', 'comment': 'comment'
         })
-        PD_2024.rename(columns={"Classe de risque": "level", "Commentaire de risque": "comment"}, inplace=True)
         PD_2024['PD_2024'] = pd.to_numeric(PD_2024['PD_2024'], errors='coerce')
         mean_pd = PD_2024['PD_2024'].mean()
         PD_2024['PD_2024'].fillna(mean_pd, inplace=True)
@@ -1343,48 +1349,6 @@ def pd_view(request):
         id_pd2024_list = PD_2024[['id', 'PD_2024']].to_records(index=False).tolist()
         request.session['id_pd2024_list'] = id_pd2024_list
         print("Données id/PD_2024 stockées dans la session.")
-
-        # Calculate lifetime PD
-        def calculate_pd_lifetime(pd_series):
-            pd_lt = 1 - (pd_series.apply(lambda x: (1 - x / 100)).prod())
-            return pd_lt * 100
-
-        X_test_copy["PD_LifeTime"] = X_test_copy.apply(
-            lambda row: calculate_pd_lifetime(row[['PD_12mois']]), axis=1
-        )
-
-        # Map stages
-        def map_stage(grade):
-            if 0 <= grade <= 1:
-                return "Stage 1"
-            elif 2 <= grade <= 3:
-                return "Stage 2"
-            elif 4 <= grade <= 5:
-                return "Stage 3"
-            else:
-                return "Unknown"
-
-        X_test_copy['Stage_2024'] = X_test_copy.get('grade2024', pd.Series([0] * len(X_test_copy))).apply(map_stage)
-
-        # Final DataFrame
-        final_df = pd.DataFrame({
-            'id': X_test_copy['id'],
-            'PD_2024': PD_2024['PD_2024'],
-            'PD_Lifetime': X_test_copy['PD_LifeTime'],
-            'Stage_2024': X_test_copy['Stage_2024'],
-        })
-
-        # Visualizations and backtesting
-        plt.figure(figsize=(10, 5))
-        plt.hist(PD_2024["PD_2024"], bins=20, color="red", alpha=0.7)
-        plt.xlabel("Probabilité de Défaut (PD) - 2024")
-        plt.ylabel("Nombre de Clients")
-        plt.title("Distribution des Probabilités de Défaut pour 2024")
-        pd_2024_buffer = io.BytesIO()
-        plt.savefig(pd_2024_buffer, format='png')
-        pd_2024_buffer.seek(0)
-        pd_2024_image = base64.b64encode(pd_2024_buffer.getvalue()).decode('utf-8')
-        plt.close()
 
         # Backtesting
         np.random.seed(42)
@@ -1408,64 +1372,34 @@ def pd_view(request):
         pd_graph_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
         plt.close()
 
-        # Economic scenarios
-        np.random.seed(42)
-        df["Inflation"] = np.random.uniform(1.5, 3.5, len(df))
-        df["Chômage"] = np.random.uniform(3.0, 8.0, len(df))
-        df["Croissance"] = np.random.uniform(0.5, 4.0, len(df))
-
-        correlation_inflation_pd_2024 = df["Inflation"].corr(final_df["PD_2024"])
-        correlation_chomage_pd_2024 = df["Chômage"].corr(final_df["PD_2024"])
-        correlation_croissance_pd_2024 = df["Croissance"].corr(final_df["PD_2024"])
-
-        scenarios_2025 = {
-            "Optimiste": {"Inflation": 1.8, "Chômage": 3.8, "Croissance": 3.8},
-            "Neutre": {"Inflation": 2.5, "Chômage": 5.8, "Croissance": 3.0},
-            "Pessimiste": {"Inflation": 3.5, "Chômage": 7.5, "Croissance": 0.8}
-        }
-
-        adjusted_pd_list = []
-        for _, row in final_df.iterrows():
-            id_value = row["id"]
-            pd_initial = row["PD_2024"]
-            for scenario_name, scenario_values in scenarios_2025.items():
-                pd_adjusted = (
-                    scenario_values["Inflation"] * correlation_inflation_pd_2024 +
-                    scenario_values["Chômage"] * correlation_chomage_pd_2024 +
-                    scenario_values["Croissance"] * correlation_croissance_pd_2024
-                )
-                pd_adjusted = pd_initial + pd_adjusted
-                pd_adjusted = max(pd_adjusted, 0)
-                adjusted_pd_list.append([id_value, scenario_name, pd_initial, pd_adjusted])
-
-        df_adjusted_pd_2025 = pd.DataFrame(
-            adjusted_pd_list, columns=["ID", "Scénario", "PD_2024_Initial", "PD_2024_Ajusté"]
-        )
+        # Pagination
+        pd_records = PD_2024.to_dict(orient="records")
+        paginator = Paginator(pd_records, 20)  # 10 records per page
+        page_number = request.GET.get('page')
+        try:
+            page_obj = paginator.page(page_number)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
 
         # Render template
         return render(
-    request,
-    "pd.html",
-    {
-        "accuracy": accuracy,
-        "report": report,
-        "cm_image": cm_image,
-        "roc_image": roc_image,
-        "PD_2024": PD_2024.to_dict(orient="records"),
-        "PD_Lifetime": X_test_copy[['id', 'PD_LifeTime']].head(10).to_dict(orient='records'),
-        "pd_2024_image": pd_2024_image,
-        "level": PD_2024.to_dict(orient="records"),
-        "comment": PD_2024.to_dict(orient="records"),
-        "mse": mse,
-        "r2": r2,
-        "pd_graph_image": pd_graph_image,  # Corrected line
-        "adjusted_pd": df_adjusted_pd_2025.to_dict(orient='records'),
-        "correlation_inflation_pd_2024": correlation_inflation_pd_2024,
-        "correlation_chomage_pd_2024": correlation_chomage_pd_2024,
-        "correlation_croissance_pd_2024": correlation_croissance_pd_2024,
-        "uploaded_data": df.to_dict(orient='records'),
-    }
-)
+            request,
+            "pd.html",
+            {
+                "accuracy": accuracy,
+                "report": report,
+                "cm_image": cm_image,
+                "roc_image": roc_image,
+                "PD_2024": page_obj.object_list,  # Pass paginated records
+                "page_obj": page_obj,  # Pass page object for pagination
+                "mse": mse,
+                "r2": r2,
+                "pd_graph_image": pd_graph_image,
+                "uploaded_data": df.to_dict(orient='records'),
+            }
+        )
 
     except MemoryError:
         print("MemoryError: Dataset too large. Consider reducing features or sampling data.")
@@ -1506,225 +1440,249 @@ def store_id_lgd_in_list(id_column, lgd_column):
         return []  # Retourner une liste vide en cas d'erreur
 
 
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+
+
 def lgd_view(request):
-    # Vérifier si les données ont été envoyées dans la session
+    # Check if data is available in the session
     if "uploaded_data" in request.session:
-        # Charger les données JSON depuis la session
+        # Load JSON data from the session
         uploaded_data_json = StringIO(request.session["uploaded_data"])
         df = pd.read_json(uploaded_data_json)
-        print("Données chargées")
+        print("Data loaded")
 
-        # Traitement des colonnes avec des durées sous forme de chaînes, par exemple 'loan_term'
-        df['term'] = df['term'].str.replace(' months', '').astype(float)  # Nettoyer les colonnes contenant des durées
+        # Process columns with duration strings, e.g., 'loan_term'
+        df['term'] = df['term'].str.replace(' months', '').astype(float)  # Clean duration columns
         
-        # Conversion de 'total_pymnt' en numérique
+        # Convert 'total_pymnt' to numeric
         df['total_pymnt'] = pd.to_numeric(df['total_pymnt'], errors='coerce')
         
-        # Remplacement des valeurs dans 'pymnt_plan' et 'application_type'
+        # Replace values in 'pymnt_plan' and 'application_type'
         if 'pymnt_plan' in df.columns:
             df['pymnt_plan'] = df['pymnt_plan'].replace({'y': 1, 'n': 0})
 
         if 'application_type' in df.columns:
             df['application_type'] = df['application_type'].apply(lambda x: 1 if x == 'individual' else 0)
             
-        # Nettoyage de la colonne 'emp_length' (Expérience professionnelle)
+        # Clean the 'emp_length' column (Professional experience)
         if 'emp_length' in df.columns:
-            df['emp_length'] = df['emp_length'].astype(str)  # Convertir en string si ce n'est pas déjà le cas
-            df['emp_length'] = df['emp_length'].str.replace(' years', '', regex=True)  # Supprimer " years"
-            df['emp_length'] = df['emp_length'].str.replace(' year', '', regex=True)   # Supprimer " year"
-            df['emp_length'] = df['emp_length'].str.replace('< 1', '0')  # Remplacer "< 1" par "0"
-            df['emp_length'] = df['emp_length'].str.replace('10+', '10')  # Remplacer "10+" par "10"
-            df['emp_length'] = pd.to_numeric(df['emp_length'], errors='coerce')  # Convertir en nombre
-            df['emp_length'].fillna(df['emp_length'].median(), inplace=True)  # Remplacer NaN par la médiane
+            df['emp_length'] = df['emp_length'].astype(str)  # Convert to string if not already
+            df['emp_length'] = df['emp_length'].str.replace(' years', '', regex=True)  # Remove " years"
+            df['emp_length'] = df['emp_length'].str.replace(' year', '', regex=True)   # Remove " year"
+            df['emp_length'] = df['emp_length'].str.replace('< 1', '0')  # Replace "< 1" with "0"
+            df['emp_length'] = df['emp_length'].str.replace('10+', '10')  # Replace "10+" with "10"
+            df['emp_length'] = pd.to_numeric(df['emp_length'], errors='coerce')  # Convert to numeric
+            df['emp_length'].fillna(df['emp_length'].median(), inplace=True)  # Replace NaN with median
 
-        # Création des variables binaires
+        # Create dummy variables
         dummy_columns = ['grade2024', 'sub_grade', 'home_ownership', 'verification_status',
                         'purpose', 'addr_state', 'initial_list_status', 'type']
 
         for col in dummy_columns:
             if col in df.columns:
                 df_Dummy = pd.get_dummies(df[col], prefix=col, prefix_sep=':', drop_first=False, dtype=int)
-                df_Dummy.index = df.index  # Assurer que l'index est le même
+                df_Dummy.index = df.index  # Ensure the index matches
                 df = pd.concat([df, df_Dummy], axis=1)
                 
-        print(f"Dimensions après création des variables binaires : {df.shape}")
-        # Suppression des colonnes originales après création des variables binaires
+        print(f"Dimensions after creating dummy variables: {df.shape}")
+        # Drop original columns after creating dummy variables
         columns_to_drop = [col for col in dummy_columns if col in df.columns]
         df.drop(columns=columns_to_drop, inplace=True)
 
-        print(f"Dimensions après suppression des colonnes d'origine : {df.shape}")
+        print(f"Dimensions after dropping original columns: {df.shape}")
+        print("Data with dummy variables created:", df.head())
 
-        print("Données avec variables binaires créées :", df.head())
-        # Prétraitement des données
-        data_defaults = df[df['loan_status'] == 1]  # Filtrer pour les prêts avec statut binaire = 1
-        data_defaults['recovery_rate'] = data_defaults['recoveries'] / data_defaults['funded_amnt']  # Calcul du taux de récupération
+        # Preprocess data
+        data_defaults = df[df['loan_status'] == 1]  # Filter for loans with binary status = 1
+        data_defaults['recovery_rate'] = data_defaults['recoveries'] / data_defaults['funded_amnt']  # Calculate recovery rate
         
-        # S'assurer que le taux de récupération ne dépasse pas 1
+        # Ensure recovery rate does not exceed 1
         data_defaults['recovery_rate'] = np.where(data_defaults['recovery_rate'] > 1, 1, data_defaults['recovery_rate'])
 
-        # Création de la colonne 'recovery_rate_0_1'
+        # Create 'recovery_rate_0_1' column
         data_defaults['recovery_rate_0_1'] = np.where(data_defaults['recovery_rate'] == 0, 0, 1)
 
-        # Préparer les données d'entrée et de sortie pour la première étape du modèle
+        # Prepare input and output data for the first stage of the model
         X = data_defaults.drop(['recovery_rate', 'recovery_rate_0_1', 'issue_d', 'earliest_cr_line', 'mths_since_last_delinq',
                                 'loan_grade2025', 'emp_title', 'title', 'mths_since_last_record', 'last_pymnt_d', 'next_pymnt_d',
-                                'last_credit_pull_d', 'mths_since_last_major_derog', 'zip_code', 'loan_status'], axis=1)  # Suppression des colonnes inutiles
-        y = data_defaults['recovery_rate_0_1']  # Cible : 1 si une récupération a eu lieu, 0 sinon
+                                'last_credit_pull_d', 'mths_since_last_major_derog', 'zip_code', 'loan_status'], axis=1)  # Drop unnecessary columns
+        y = data_defaults['recovery_rate_0_1']  # Target: 1 if recovery occurred, 0 otherwise
 
-        # Vérification des dimensions de X et y
-        print(f"Dimensions de X: {X.shape}, Dimensions de y: {y.shape}")
+        # Check dimensions of X and y
+        print(f"Dimensions of X: {X.shape}, Dimensions of y: {y.shape}")
 
-        # Diviser les données en ensembles d'entraînement et de test
+        # Split data into training and test sets
         X_train_s1, X_test_s1, y_train_s1, y_test_s1 = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        # Créer et entraîner le modèle LogisticRegression pour la première étape
-        # 🔹 Modèle de classification binaire (Recovery = Yes/No)
+        # Create and train the LogisticRegression model for the first stage
+        # 🔹 Binary classification model (Recovery = Yes/No)
         reg_lgd_st_1 = LogisticRegression(max_iter=500)
         reg_lgd_st_1.fit(X_train_s1, y_train_s1)
         y_pred1 = reg_lgd_st_1.predict(X_test_s1)
         y_proba = reg_lgd_st_1.predict_proba(X_test_s1)
 
-        # 🔹 Vérification de la cohérence des dimensions avant concaténation
+        # 🔹 Ensure dimensions match before concatenation
         if y_proba.shape[0] != y_test_s1.shape[0]:
             y_proba = y_proba[:y_test_s1.shape[0]]
 
-        # Calcul de la matrice de confusion et du rapport de classification
+        # Calculate confusion matrix and classification report
         cm = confusion_matrix(y_test_s1, y_pred1)
         report = classification_report(y_test_s1, y_pred1)
         
-          # Générer la matrice de confusion sous forme d'image
+        # Generate confusion matrix as an image
         plt.figure(figsize=(6, 4))
-        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["0", "1 "], yticklabels=["0", "1"])
-        plt.xlabel("Prédictions")
-        plt.ylabel("Vraies Valeurs")
-        plt.title("Matrice de Confusion")
+        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["0", "1"], yticklabels=["0", "1"])
+        plt.xlabel("Predictions")
+        plt.ylabel("True Values")
+        plt.title("Confusion Matrix")
         cm_buffer = io.BytesIO()
         plt.savefig(cm_buffer, format='png')
         cm_buffer.seek(0)
         cm_image = base64.b64encode(cm_buffer.getvalue()).decode('utf-8')
         plt.close()
 
-
-        # Données pour la deuxième étape du modèle (uniquement les lignes où la récupération a eu lieu)
+        # Data for the second stage of the model (only rows where recovery occurred)
         lgd_step_2_data = data_defaults[data_defaults['recovery_rate_0_1'] == 1]
 
-        # Préparer les données pour la deuxième étape du modèle
+        # Prepare data for the second stage of the model
         lgd_X_S2 = lgd_step_2_data.drop(['recovery_rate', 'recovery_rate_0_1', 'issue_d', 'earliest_cr_line', 'mths_since_last_delinq',
                                 'loan_grade2025', 'emp_title', 'title', 'mths_since_last_record', 'last_pymnt_d', 'next_pymnt_d',
                                 'last_credit_pull_d', 'mths_since_last_major_derog', 'zip_code', 'loan_status'], axis=1)
         lgd_Y_S2 = lgd_step_2_data['recovery_rate']
         lgd_X_S2_train, lgd_X_S2_test, lgd_Y_S2_train, lgd_Y_S2_test = train_test_split(lgd_X_S2, lgd_Y_S2, test_size=0.2, random_state=42)
 
-        # Créer et entraîner le modèle LinearRegression pour la deuxième étape
+        # Create and train the LinearRegression model for the second stage
         reg_lgd_st_2 = LinearRegression()
         reg_lgd_st_2.fit(lgd_X_S2_train, lgd_Y_S2_train)
 
-        # Prédictions pour la deuxième étape
+        # Predictions for the second stage
         y_pred2 = reg_lgd_st_2.predict(lgd_X_S2_test)
 
-        # Calcul des erreurs
+        # Calculate errors
         mae = mean_absolute_error(lgd_Y_S2_test, y_pred2)
         mse = mean_squared_error(lgd_Y_S2_test, y_pred2)
         rmse = np.sqrt(mse)
         r2 = r2_score(lgd_Y_S2_test, y_pred2)
 
-        # Prédictions combinées des deux étapes (calcul de la probabilité finale)
+        # Combined predictions from both stages (calculate final probability)
         y_pred3 = reg_lgd_st_2.predict(X_test_s1)
         y_comb = y_pred3 * y_pred1
         y_comb = np.where(y_comb < 0, 0, y_comb)
         y_comb = np.where(y_comb > 1, 1, y_comb)
         
-        # Vérifier la taille des résultats
+        # Check the size of the results
         if len(y_comb) < len(df):
             missing_rows = len(df) - len(y_comb)
-            y_comb = np.append(y_comb, [np.nan] * missing_rows)  # Complète avec NaN si nécessaire
+            y_comb = np.append(y_comb, [np.nan] * missing_rows)  # Fill with NaN if necessary
         
-        
-        # Création du DataFrame final avec ID et y_comb
+        # Create final DataFrame with ID and y_comb
         df_result = pd.DataFrame({
-            'id': df['id'],  # Vérifie que X_test_copy contient bien 'id'
+            'id': df['id'],  # Ensure 'id' exists in the DataFrame
             'y_comb': y_comb
         })
         
-        # Supprimer les lignes où y_comb est NaN
+        # Drop rows where y_comb is NaN
         df_result = df_result.dropna(subset=['y_comb'])
         
-        # Convertir en liste de dictionnaires pour le contexte Django
-        context = {
-            'predictions': df_result.to_dict(orient="records")
-        }
-        print(context)
+        # Convert to list of dictionaries for pagination
+        predictions_list = df_result.to_dict(orient="records")
         
+        # Paginate the predictions data (LGD Predictions table)
+        predictions_paginator = Paginator(predictions_list, 20)  # 50 items per page
+        predictions_page = request.GET.get('predictions_page')  # Use a unique query parameter
+        try:
+            predictions_page_obj = predictions_paginator.page(predictions_page)
+        except PageNotAnInteger:
+            predictions_page_obj = predictions_paginator.page(1)
+        except EmptyPage:
+            predictions_page_obj = predictions_paginator.page(predictions_paginator.num_pages)
+
         data1 = df.copy()
 
-        # Suppression des colonnes inutiles pour les prédictions
-        data1 = data1.drop([ 'issue_d', 'earliest_cr_line', 'mths_since_last_delinq',
-                                'loan_grade2025', 'emp_title', 'title', 'mths_since_last_record', 'last_pymnt_d', 'next_pymnt_d',
-                                'last_credit_pull_d', 'mths_since_last_major_derog', 'zip_code', 'loan_status'], axis=1)
+        # Drop unnecessary columns for predictions
+        data1 = data1.drop(['issue_d', 'earliest_cr_line', 'mths_since_last_delinq',
+                            'loan_grade2025', 'emp_title', 'title', 'mths_since_last_record', 'last_pymnt_d', 'next_pymnt_d',
+                            'last_credit_pull_d', 'mths_since_last_major_derog', 'zip_code', 'loan_status'], axis=1)
 
         data1 = data1.dropna()
 
-        # Prédictions pour 'recovery_rate_st_1' avec le modèle reg_lgd_st_1
+        # Predictions for 'recovery_rate_st_1' with reg_lgd_st_1 model
         data1['recovery_rate_st_1'] = reg_lgd_st_1.predict(data1)
         print(data1['recovery_rate_st_1'])
-        # Suppression correcte de la colonne 'recovery_rate_st_2' avant la prédiction
+
+        # Correctly drop 'recovery_rate_st_2' before prediction
         rr2 = reg_lgd_st_2.predict(data1.drop(columns=['recovery_rate_st_1'], axis=1, errors='ignore'))
 
-        # Ajout des valeurs prédites dans la colonne 'recovery_rate_st_2'
+        # Add predicted values to 'recovery_rate_st_2' column
         data1['recovery_rate_st_2'] = rr2
 
-        # Combinaison des valeurs prédites des étapes 1 et 2 pour déterminer le taux de récupération final estimé
+        # Combine predicted values from stages 1 and 2 to determine the final estimated recovery rate
         data1['recovery_rate'] = data1['recovery_rate_st_1'] * data1['recovery_rate_st_2']
 
-        # Affichage de la description statistique
+        # Display statistical description
         print(data1['recovery_rate'].describe())
 
-        # Correction des valeurs du taux de récupération en dehors de la plage [0, 1]
+        # Correct recovery rate values outside the [0, 1] range
         data1['recovery_rate'] = np.where(data1['recovery_rate'] < 0, 0, data1['recovery_rate'])
         data1['recovery_rate'] = np.where(data1['recovery_rate'] > 1, 1, data1['recovery_rate'])
-        # Calcul du LGD (1 - taux de récupération estimé)
+
+        # Calculate LGD (1 - estimated recovery rate)
         data1['LGD'] = (1 - data1['recovery_rate'])
 
-        # Affichage des statistiques descriptives pour LGD
+        # Display descriptive statistics for LGD
         print(data1['LGD'].describe())
         
-        # Ajout de la distribution du LGD dans les données passées au template
+        # Add LGD distribution to the data passed to the template
         LGD_distribution = data1['LGD']
         
-        # Création du DataFrame final avec ID et y_comb
+        # Create final DataFrame with ID and LGD_distribution
         LGD_result = pd.DataFrame({
-            'id': df['id'],  # Vérifie que X_test_copy contient bien 'id'
+            'id': df['id'],  # Ensure 'id' exists in the DataFrame
             'LGD_distribution': LGD_distribution
         })
-    
         
         LGD_result = LGD_result.dropna(subset=['LGD_distribution'])
        
+        # Convert to list of dictionaries for pagination
+        lgd_distribution_list = LGD_result.to_dict(orient="records")
+        
+        # Paginate the LGD distribution data (LGD Distribution table)
+        lgd_distribution_paginator = Paginator(lgd_distribution_list, 20)  # 50 items per page
+        lgd_distribution_page = request.GET.get('lgd_distribution_page')  # Use a unique query parameter
+        try:
+            lgd_distribution_page_obj = lgd_distribution_paginator.page(lgd_distribution_page)
+        except PageNotAnInteger:
+            lgd_distribution_page_obj = lgd_distribution_paginator.page(1)
+        except EmptyPage:
+            lgd_distribution_page_obj = lgd_distribution_paginator.page(lgd_distribution_paginator.num_pages)
+
         id_lgd_list = LGD_result[['id', 'LGD_distribution']].to_records(index=False).tolist()
 
-       # Stocker la liste dans la session
+        # Store the list in the session
         request.session['id_lgd_list'] = id_lgd_list
-        print("Données id/LGD stockées dans la session.")
+        print("ID/LGD data stored in session.")
 
-
-        # Afficher les colonnes contenant des NaN dans X
+        # Display columns containing NaN in X
         nan_columns = X.columns[X.isna().any(axis=0)]
-        print("Colonnes contenant des NaN :", nan_columns)
-        # Passer les résultats au template
+        print("Columns containing NaN:", nan_columns)
+
+        # Pass results to the template
         return render(request, 
                       'lgd.html', {
-            'accuracy': report,  # Rapport de classification
-            'confusion_matrix': cm,
-            'mae': mae,
-            'mse': mse,
-            'rmse': rmse,
-            'cm_image': cm_image,
-            'contextLGD':LGD_result.to_dict(orient="records"),
-            'context':df_result.to_dict(orient="records"),
-            'r2': r2,
-            'y_comb': y_comb,  # Prédictions combinées
-            'LGD_distribution': LGD_distribution ,
-        })
+                          'accuracy': report,  # Classification report
+                          'confusion_matrix': cm,
+                          'mae': mae,
+                          'mse': mse,
+                          'rmse': rmse,
+                          'cm_image': cm_image,
+                          'contextLGD': lgd_distribution_page_obj.object_list,  # Paginated data
+                          'context': predictions_page_obj.object_list,  # Paginated data
+                          'predictions_page_obj': predictions_page_obj,  # For pagination controls
+                          'lgd_distribution_page_obj': lgd_distribution_page_obj,  # For pagination controls
+                          'r2': r2,
+                          'y_comb': y_comb,  # Combined predictions
+                          'LGD_distribution': LGD_distribution,
+                      })
 
     return render(request, 'lgd.html')
 
@@ -1910,61 +1868,77 @@ def store_id_ead_in_list(id_column, ead_column):
         return []  # Retourner une liste vide en cas d'erreur
     
 from django.shortcuts import render, redirect
-import pandas as pd
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from io import StringIO
+import pandas as pd
+
 
 def ead_view(request):
     try:
-        # Vérifier si des données ont été téléchargées dans la session
+        # Check if data has been uploaded in the session
         if "uploaded_data" in request.session:
             uploaded_data_json = StringIO(request.session["uploaded_data"])
             df = pd.read_json(uploaded_data_json)
-            print("Données chargées :", df.head())  # Affiche les premières lignes des données
+            print("Data loaded:", df.head())  # Display the first few rows of data
 
             if df.empty:
-                print("Le DataFrame est vide.")
-                return render(request, 'ead.html', {'message': "Le fichier chargé est vide."})
+                print("The DataFrame is empty.")
+                return render(request, 'ead.html', {'message': "The uploaded file is empty."})
 
-            print("Le DataFrame contient des données.")
+            print("The DataFrame contains data.")
 
-            # Vérification et calcul des colonnes CCF et EAD
-            if {'total_rec_prncp', 'funded_amnt'}.issubset(df.columns):
-                df['CCF'] = df['total_rec_prncp'] / df['funded_amnt']  # Calcul du CCF
-                df['EAD'] = df['CCF'] * df['funded_amnt']  # Calcul de l'EAD
-                print("Colonnes 'CCF' et 'EAD' calculées")
+            # Check and calculate CCF and EAD columns
+            if 'funded_amnt' in df.columns:
+                df['CCF'] = 1  # Set CCF to 1 as requested
+                df['EAD'] = 1 * df['funded_amnt']  # Calculate EAD as 1 * funded_amnt
+                print("Columns 'CCF' and 'EAD' calculated")
             else:
-                print("Les colonnes nécessaires sont absentes.")
-                return render(request, 'ead.html', {'message': "Les colonnes 'total_rec_prncp' et 'funded_amnt' sont absentes."})
+                print("The column 'funded_amnt' is missing.")
+                return render(request, 'ead.html', {'message': "The column 'funded_amnt' is missing."})
 
-            # Vérifier si la colonne 'client_id' existe et l'utiliser comme index
+            # Check if 'id' column exists and use it as index
             if 'id' in df.columns:
-                df = df.set_index('id')  # Utiliser 'id' comme index
-                df = df[['CCF', 'EAD']].reset_index()  # Remettre l'index en colonne
-                print("Utilisation de 'id' comme index")
+                df = df.set_index('id')  # Use 'id' as index
+                df = df[['CCF', 'EAD']].reset_index()  # Reset index to include 'id'
+                print("Using 'id' as index")
             else:
-                df = df[['CCF', 'EAD']].reset_index()  # Garder l'index par défaut
-                print("Aucun 'id' trouvé, utilisation de l'index classique")
-                
-            # Création de la liste id/EAD
-            id_ead_list = [(row['id'], row['EAD']) for index, row in df.iterrows()]
+                df = df[['CCF', 'EAD']].reset_index()  # Keep default index
+                print("No 'id' found, using default index")
 
-            # Stockage de la liste dans la session
+            # Create id/EAD list with native Python types
+            id_ead_list = [(int(row['id']), float(row['EAD'])) for index, row in df.iterrows()]
+
+            # Store the list in the session
             request.session['id_ead_list'] = id_ead_list
-            print("Données id/EAD stockées dans la session")
+            print("ID/EAD data stored in session")
 
-            # Préparer les données à afficher dans le template
+            # Prepare data to display in the template
             columns = df.columns.tolist()
-            ccf_ead_data = df.values.tolist()  # Convertir en liste de listes
+            ccf_ead_data = df.values.tolist()  # Convert to list of lists
 
-            return render(request, 'ead.html', {'ccf_ead_data': ccf_ead_data, 'columns': columns})
+            # Paginate the data
+            paginator = Paginator(ccf_ead_data, 20)  # 20 items per page as requested
+            page = request.GET.get('page')  # Get the page number from the request
+            try:
+                page_obj = paginator.page(page)
+            except PageNotAnInteger:
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                page_obj = paginator.page(paginator.num_pages)
+
+            return render(request, 'ead.html', {
+                'ccf_ead_data': page_obj.object_list,
+                'columns': columns,
+                'page_obj': page_obj,
+                'message': None  # Clear message if data is successfully processed
+            })
 
         else:
-            return render(request, 'ead.html', {'message': "Aucune donnée téléchargée."})
+            return render(request, 'ead.html', {'message': "No data uploaded."})
 
     except Exception as e:
-        print("Erreur lors du traitement des données :", e)
-        return render(request, 'ead.html', {'message': "Une erreur est survenue lors du traitement des données."})
-
+        print("Error processing data:", e)
+        return render(request, 'ead.html', {'message': "An error occurred while processing the data."})
 
 
 
@@ -2019,6 +1993,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import io
 import base64
+from django.utils.translation import gettext as _  # Import translation function
+
 
 def fig_to_base64(fig):
     buf = io.BytesIO()
@@ -2027,6 +2003,8 @@ def fig_to_base64(fig):
     image_base64 = base64.b64encode(buf.read()).decode('utf-8')
     plt.close(fig)
     return image_base64
+
+
 def format_nombre(valeur):
     try:
         return "{:,.2f}".format(valeur).replace(",", " ")
@@ -2054,8 +2032,8 @@ def vision360_view(request):
 
         # Remplacer 'N/A' par NaN dans les colonnes 'pd', 'lgd' et 'ead' (sans chained assignment warning)
         df_combined = df_combined.replace({'pd': {'N/A': np.nan},
-                                           'lgd': {'N/A': np.nan},
-                                           'ead': {'N/A': np.nan}})
+                                          'lgd': {'N/A': np.nan},
+                                          'ead': {'N/A': np.nan}})
 
         # Convertir en float
         df_combined['pd'] = df_combined['pd'].astype(float)
@@ -2095,14 +2073,13 @@ def vision360_view(request):
         # Application du calcul UL
         df_combined['UL'] = df_combined.apply(calculate_UL, axis=1, z_999=z_999, rho=rho)
 
-         # Taux de provisionnement
-        df_combined['taux_provisionnement'] = df_combined['ECL'] / df_combined['ead'] *100
+        # Taux de provisionnement
+        df_combined['taux_provisionnement'] = df_combined['ECL'] / df_combined['ead'] * 100
 
         # Facteur de corrélation rho
-        rho = 0.15
-        df_combined['rho'] = rho 
+        df_combined['rho'] = rho
 
-         # Fonction de calcul de K (extrait de ton code)
+        # Fonction de calcul de K
         def calculate_K(PD, LGD, rho):
             if PD >= 1.0 or PD <= 0.0:
                 return np.nan
@@ -2111,6 +2088,7 @@ def vision360_view(request):
             num = z_PD + np.sqrt(rho) * z_999
             denom = np.sqrt(1 - rho)
             return LGD * norm.cdf(num / denom)
+
         # Calcul de K
         df_combined['K'] = df_combined.apply(lambda row: calculate_K(row['PD'], row['lgd'], row['rho']), axis=1)
 
@@ -2130,25 +2108,24 @@ def vision360_view(request):
 
         # Arrondir les colonnes aux formats souhaités
         df_combined['id'] = df_combined['id'].astype(int)
-        df_combined['pd'] = df_combined['pd'].round(3)
-        df_combined['lgd'] = df_combined['lgd'].round(3)
-        df_combined['ead'] = df_combined['ead'].round(3)
-        df_combined['ECL'] = df_combined['ECL'].round(3)
-        df_combined['UL'] = df_combined['UL'].round(3)
-        df_combined['taux_provisionnement'] = df_combined['taux_provisionnement'].round(4)
-        df_combined['RWA'] = df_combined['RWA'].round(3)
-        df_combined['fonds_propres'] = df_combined['fonds_propres'].round(4)
-
+        df_combined['pd'] = df_combined['pd'].round(2)
+        df_combined['lgd'] = df_combined['lgd'].round(2)
+        df_combined['ead'] = df_combined['ead'].astype(int)
+        df_combined['ECL'] = df_combined['ECL'].round(2)
+        df_combined['UL'] = df_combined['UL'].round(2)
+        df_combined['taux_provisionnement'] = df_combined['taux_provisionnement'].round(2)
+        df_combined['RWA'] = df_combined['RWA'].round(2)
+        df_combined['fonds_propres'] = df_combined['fonds_propres'].round(2)
 
         # Convertir pour envoi au template
         combined_list = df_combined.to_dict(orient='records')
-        
-                # Création d’un résumé agrégé
-        ead_total = df_combined['ead'].sum().round(2)
+
+        # Création d’un résumé agrégé
+        ead_total = df_combined['ead'].sum().astype(int)
         ecl_total = df_combined['ECL'].sum().round(2)
 
-# Calcul du taux de provision global
-        taux_prov_global = round((ecl_total / ead_total)*100, 4) if ead_total != 0 else 0
+        # Calcul du taux de provision global
+        taux_prov_global = round((ecl_total / ead_total) * 100, 4) if ead_total != 0 else 0
 
         recap_dict = {
             'ead_total': format_nombre(ead_total),
@@ -2162,40 +2139,57 @@ def vision360_view(request):
             'nb_total_dossiers': len(df_combined)
         }
 
-
-
-
-
-        # Mapping des niveaux à des libellés
         risk_labels = {
-            5: "À surveiller",
-            4: "Moyen",
-            3: "Bon",
-            2: "Très Bon",
-            1: "Excellent"
+            5: _("To observe"),
+            4: _("Average"),
+            3: _("Good"),
+            2: _("Very Good"),
+            1: _("Excellent")
         }
 
-        # Création d'une nouvelle colonne avec les labels
-        df_combined['Classe de Risque'] = df_combined['level'].map(risk_labels)
+        # Creating a new column with the labels
+        df_combined['Risk Class'] = df_combined['level'].map(risk_labels)
 
-        # Création du plot
-        fig1, ax1 = plt.subplots()
-        sns.countplot(data=df_combined, x='Classe de Risque', order=["Excellent", "Très Bon", "Bon", "Moyen", "À surveiller"],
-                    palette='viridis', ax=ax1)
+        # Generating the plot
+        fig, ax = plt.subplots(figsize=(8, 6))
+        try:
+            sns.countplot(
+                data=df_combined,
+                x='Risk Class',
+                order=[_("Excellent"), _("Very Good"), _("Good"), _("Average"), _("To observe")],
+                palette='viridis',
+                ax=ax
+            )
+            ax.set_title(_("Distribution by Risk Class"))
+            ax.set_xlabel(_("Risk Class"))
+            ax.set_ylabel(_("Number of Clients"))
+            ax.tick_params(axis='x', rotation=30)
+            risk_level_plot = fig_to_base64(fig)
+        finally:
+            plt.close(fig)  # Close the figure to free memory
 
-        ax1.set_title("Répartition par classe de risque")
-        ax1.set_xlabel("Classe de Risque")
-        ax1.set_ylabel("Nombre de clients")
-        ax1.tick_params(axis='x', rotation=30)
-        risk_level_plot = fig_to_base64(fig1)
-
+        # Paginate the combined_list for both tables
+        vision360_paginator = Paginator(combined_list, 20)  # 20 items per page
+        indicators_paginator = Paginator(combined_list, 20)  # 20 items per page
+        vision360_page = request.GET.get('vision360_page')
+        indicators_page = request.GET.get('indicators_page')
+        try:
+            vision360_page_obj = vision360_paginator.page(vision360_page)
+            indicators_page_obj = indicators_paginator.page(indicators_page)
+        except PageNotAnInteger:
+            vision360_page_obj = vision360_paginator.page(1)
+            indicators_page_obj = indicators_paginator.page(1)
+        except EmptyPage:
+            vision360_page_obj = vision360_paginator.page(vision360_paginator.num_pages)
+            indicators_page_obj = indicators_paginator.page(indicators_paginator.num_pages)
 
         # Renvoyer les données au template
         return render(request, 'vision360.html', {
-            'combined_list': combined_list,
+            'combined_list': combined_list,  # Full list for reference (optional)
+            'vision360_page_obj': vision360_page_obj,
+            'indicators_page_obj': indicators_page_obj,
             'recap': recap_dict,
-            "risk_level_plot": risk_level_plot,
-            
+            'risk_level_plot': risk_level_plot,
         })
 
     except Exception as e:
@@ -2204,6 +2198,7 @@ def vision360_view(request):
 
         # Afficher l'erreur à l'utilisateur
         return render(request, 'vision360.html', {'message': f"Une erreur est survenue : {str(e)}"})
+    
 
 from django.shortcuts import render
 import pandas as pd

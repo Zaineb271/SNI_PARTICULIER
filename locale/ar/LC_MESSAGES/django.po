@@ -1,0 +1,398 @@
+# Arabic translations for SNI_RETAIL project
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-14 12:54+0100\n"
+"PO-Revision-Date: 2025-05-14 12:54+0100\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "CARTHAGO SCORING 1.0.0"
+msgstr "كارثاغو سكورينغ 1.0.0"
+
+msgid "Welcome admin"
+msgstr "مرحبًا بالمسؤول"
+
+msgid "Data Overview"
+msgstr "نظرة عامة على البيانات"
+
+msgid "Visualization"
+msgstr "التصور"
+
+msgid "Feature Selection"
+msgstr "اختيار المتغيرات"
+
+
+msgid "Modeling"
+msgstr "النمذجة"
+
+msgid "Periodic Risk Evaluation"
+msgstr "تقييم المخاطر الدوري"
+
+msgid "360° Risk Portfolio View"
+msgstr "رؤية 360 درجة لمحفظة المخاطر"
+
+msgid "Client File"
+msgstr "ملف العميل"
+
+msgid "Quick Search ..."
+msgstr "بحث سريع ..."
+
+msgid "Logo"
+msgstr "الشعار"
+
+msgid "User"
+msgstr "المستخدم"
+
+msgid "Folder"
+msgstr "مجلد"
+
+msgid "Full Data Display"
+msgstr "عرض البيانات الكامل"
+
+msgid "Data Preview and Preprocessing"
+msgstr "معاينة البيانات والمعالجة المسبقة"
+
+msgid "Current Target Variable"
+msgstr "المتغير المستهدف الحالي"
+
+msgid "Descriptive Statistics"
+msgstr "الإحصاءات الوصفية"
+
+msgid "Target Variable Selection"
+msgstr "اختيار المتغير المستهدف"
+
+msgid "Save"
+msgstr "حفظ"
+
+msgid "Missing Values"
+msgstr "القيم المفقودة"
+
+msgid "Column"
+msgstr "العمود"
+
+msgid "Percentage"
+msgstr "النسبة المئوية"
+
+msgid "Action"
+msgstr "الإجراء"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Impute with Mean"
+msgstr "التعبئة بالمتوسط"
+
+msgid "Impute with Mode"
+msgstr "التعبئة بالوضع"
+
+msgid "Impute with Median"
+msgstr "التعبئة بالوسيط"
+
+msgid "Visualization Choices"
+msgstr "خيارات التصور"
+
+msgid "Pie Chart Visualization"
+msgstr "تصور الرسم البياني الدائري"
+
+msgid "Categorical Distribution Visualization"
+msgstr "تصور توزيع الفئات"
+
+msgid "Numerical Distribution Visualization"
+msgstr "تصور توزيع الأرقام"
+
+msgid "Visualize"
+msgstr "تصور"
+
+msgid "Current Target Column"
+msgstr "العمود المستهدف الحالي"
+
+msgid "Run Calculations"
+msgstr "تشغيل الحسابات"
+
+msgid "Dependency Analysis between Categorical Variables and Target Variable"
+msgstr "تحليل الاعتماد بين المتغيرات الفئوية والمتغير المستهدف"
+
+msgid "The ANOVA test is used to study the dependency relationship of a quantitative variable to a qualitative variable."
+msgstr "يُستخدم اختبار ANOVA لدراسة علاقة الاعتماد بين متغير كمي ومتغير نوعي."
+
+msgid "P-value > 0.05: acceptance of H0, so the default does not depend on the variable. This variable is not important in prediction."
+msgstr "القيمة الاحتمالية > 0.05: قبول H0، لذا لا يعتمد الافتراضي على المتغير. هذا المتغير غير مهم في التنبؤ."
+
+msgid "P-value < 0.05: rejection of H0, so the default criterion depends on the variable. This variable is important in prediction."
+msgstr "القيمة الاحتمالية < 0.05: رفض H0، لذا يعتمد معيار الافتراضي على المتغير. هذا المتغير مهم في التنبؤ."
+
+msgid "Variables"
+msgstr "المتغيرات"
+
+msgid "P_value"
+msgstr "القيمة الاحتمالية"
+
+msgid "Independence"
+msgstr "الاستقلال"
+
+msgid "Dependency Analysis between Numerical Variables and Target Variable"
+msgstr "تحليل الاعتماد بين المتغيرات العددية والمتغير المستهدف"
+
+msgid "Information Value is a widely used technique in variable selection."
+msgstr "قيمة المعلومات هي تقنية مستخدمة على نطاق واسع في اختيار المتغيرات."
+
+msgid "When Information Value (IV) increases, the predictive power of the variable increases."
+msgstr "عندما تزداد قيمة المعلومات (IV)، تزداد القوة التنبؤية للمتغير."
+
+msgid "We eliminate variables with an IV < 0.1. For strong predictive power, IV > 0.3 is required."
+msgstr "نستبعد المتغيرات التي لها IV < 0.1. للحصول على قوة تنبؤية قوية، يجب أن يكون IV > 0.3."
+
+msgid "IV"
+msgstr "قيمة المعلومات"
+
+msgid "Category"
+msgstr "الفئة"
+
+msgid "Correlation Matrix"
+msgstr "مصفوفة الارتباط"
+
+msgid "Correlation is a coefficient that measures the linear dependency between variables."
+msgstr "الارتباط هو معامل يقيس الاعتماد الخطي بين المتغيرات."
+
+msgid "Correlated Variables"
+msgstr "المتغيرات المرتبطة"
+
+msgid "Correlation"
+msgstr "الارتباط"
+
+msgid "Column to Delete"
+msgstr "العمود المراد حذفه"
+
+msgid "Transition Matrix in Heatmap"
+msgstr "مصفوفة الانتقال في خريطة حرارية"
+
+msgid "Transition Matrix of Default Probability between Year N and N+1"
+msgstr "مصفوفة الانتقال لاحتمالية الافتراضي بين السنة N و N+1"
+
+msgid "Generate Transition Matrix"
+msgstr "إنشاء مصفوفة الانتقال"
+
+msgid "Transition Matrix"
+msgstr "مصفوفة الانتقال"
+
+msgid "The transition matrix is generated between Year 'N' and 'N+1'."
+msgstr "تم إنشاء مصفوفة الانتقال بين السنة 'N' و 'N+1'."
+
+msgid "Default Probability"
+msgstr "احتمالية الافتراضي"
+
+msgid "Model Performance"
+msgstr "أداء النموذج"
+
+msgid "Model Summary"
+msgstr "ملخص النموذج"
+
+msgid "Model Accuracy: {{ accuracy }}"
+msgstr "دقة النموذج: {{ accuracy }}"
+
+msgid "Classification Report"
+msgstr "تقرير التصنيف"
+
+msgid "Confusion Matrix"
+msgstr "مصفوفة الارتباك"
+
+msgid "ROC Curve"
+msgstr "منحنى ROC"
+
+msgid "Estimated Default Probability for 2024"
+msgstr "احتمالية الافتراضي المقدرة لعام 2024"
+
+msgid "ID"
+msgstr "المعرف"
+
+msgid "PD 2024"
+msgstr "احتمالية الافتراضي 2024"
+
+msgid "Risk Class"
+msgstr "فئة المخاطر"
+
+msgid "Risk Comment"
+msgstr "تعليق المخاطر"
+
+msgid "Estimated Lifetime PD"
+msgstr "احتمالية الافتراضي مدى الحياة المقدرة"
+
+msgid "PD Lifetime"
+msgstr "احتمالية الافتراضي مدى الحياة"
+
+msgid "PD Histogram for 2024"
+msgstr "هستوغرام احتمالية الافتراضي لعام 2024"
+
+msgid "Model Backtesting"
+msgstr "اختبار النموذج الرجعي"
+
+msgid "Mean Squared Error (MSE):"
+msgstr "خطأ التربيع المتوسط (MSE):"
+
+msgid "R-squared (R²):"
+msgstr "معامل التحديد (R²):"
+
+msgid "Backtesting between Actual PD and Predicted PD"
+msgstr "الاختبار الرجعي بين احتمالية الافتراضي الفعلية والمتنبأ بها"
+
+msgid "Correlations for 2024"
+msgstr "الارتباطات لعام 2024"
+
+msgid "Inflation"
+msgstr "التضخم"
+
+msgid "Unemployment"
+msgstr "البطالة"
+
+msgid "Growth"
+msgstr "النمو"
+
+msgid "PD_2024 adjusted based on scenarios"
+msgstr "احتمالية الافتراضي 2024 المعدلة بناءً على السيناريوهات"
+
+msgid "PD"
+msgstr "احتمالية الافتراضي"
+
+msgid "Scenario"
+msgstr "السيناريو"
+
+msgid "PD_2024 Initial"
+msgstr "احتمالية الافتراضي الأولية 2024"
+
+msgid "PD_2025 Adjusted"
+msgstr "احتمالية الافتراضي المعدلة 2025"
+
+msgid "Loss Given Default"
+msgstr "الخسارة في حالة الافتراضي"
+
+msgid "Loss Given Default Rate"
+msgstr "معدل الخسارة في حالة الافتراضي"
+
+msgid "LGD Results"
+msgstr "نتائج الخسارة في حالة الافتراضي"
+
+msgid "LGD Model Results"
+msgstr "نتائج نموذج الخسارة في حالة الافتراضي"
+
+msgid "Classification - Report"
+msgstr "التصنيف - التقرير"
+
+msgid "Model Errors"
+msgstr "أخطاء النموذج"
+
+msgid "MAE:"
+msgstr "متوسط الخطأ المطلق:"
+
+msgid "MSE:"
+msgstr "خطأ التربيع المتوسط:"
+
+msgid "RMSE:"
+msgstr "جذر متوسط الخطأ التربيعي:"
+
+msgid "R² Score:"
+msgstr "نقاط R²:"
+
+msgid "LGD Predictions"
+msgstr "توقعات الخسارة في حالة الافتراضي"
+
+msgid "LGD Distribution"
+msgstr "توزيع الخسارة في حالة الافتراضي"
+
+msgid "LGD"
+msgstr "الخسارة في حالة الافتراضي"
+
+msgid "Exposure at Default"
+msgstr "التعرض عند الافتراضي"
+
+msgid "CCF and EAD Values"
+msgstr "قيم عامل التحويل الائتماني والتعرض عند الافتراضي"
+
+msgid "EAD"
+msgstr "التعرض عند الافتراضي"
+
+msgid "Portfolio Summary"
+msgstr "ملخص المحفظة"
+
+msgid "Number of Files"
+msgstr "عدد الملفات"
+
+msgid "Total EAD"
+msgstr "إجمالي التعرض عند الافتراضي"
+
+msgid "Total ECL"
+msgstr "إجمالي الخسارة الائتمانية المتوقعة"
+
+msgid "Total UL"
+msgstr "إجمالي الخسارة غير المتوقعة"
+
+msgid "Total RWA"
+msgstr "إجمالي الأصول المرجحة بالمخاطر"
+
+msgid "Capital to Reserve"
+msgstr "رأس المال المطلوب حجبه"
+
+msgid "Average PD"
+msgstr "متوسط احتمالية الافتراضي"
+
+msgid "Average LGD"
+msgstr "متوسط الخسارة في حالة الافتراضي"
+
+msgid "Global Provision Rate"
+msgstr "معدل التزويد العام"
+
+msgid "Distribution by Risk Level"
+msgstr "التوزيع حسب مستوى المخاطر"
+
+msgid "ECL"
+msgstr "الخسارة الائتمانية المتوقعة"
+
+msgid "UL"
+msgstr "الخسارة غير المتوقعة"
+
+msgid "Risk Indicators"
+msgstr "مؤشرات المخاطر"
+
+msgid "Provisioning Rate"
+msgstr "معدل التزويد"
+
+msgid "RWA"
+msgstr "الأصول المرجحة بالمخاطر"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Please provide a client ID."
+msgstr "يرجى تقديم معرف العميل."
+
+msgid "Identification"
+msgstr "التعريف"
+
+msgid "Rating according to IFRS 9"
+msgstr "التصنيف وفقًا للمعيار IFRS 9"
+
+msgid "Data Overview and Preprocessing"
+msgstr "نظرة عامة على البيانات والمعالجة المسبقة"
+
+msgid "Database Dimensions"
+msgstr "أبعاد قاعدة البيانات"
+
+msgid "Very Good"
+msgstr "جيد جدًا"
+
+msgid "Good"
+msgstr "جيد"
+
+msgid "Average"
+msgstr "متوسط"
+
+msgid "To observe"
+msgstr "للمراقبة"
+
+msgid "Excellent"
+msgstr "ممتاز"

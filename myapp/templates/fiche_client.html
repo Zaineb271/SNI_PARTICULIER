@@ -8,71 +8,34 @@
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     />
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            height: 100vh; /* Pour que le body occupe toute la hauteur */
-            display: flex;
-            justify-content: center; /* Centrer horizontalement */
-            align-items: center; /* Centrer verticalement */
-          }
-   
-          div.container.content {
-            margin-left: 350px;
-          }
-          div.container {
-            margin-top: 10px;
-            margin-left: 180px;
-            max-width: 80%;
-            padding: 2rem;
-          }
-          .container {
-            max-width: 800px;
-            width: 100%;
-            padding: 2rem;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-            text-align: center; /* Centrer le texte dans le conteneur */
-          }
-      
-
-      /* Ensure the container.content is centered without any offsets */
-      div.container.content {
-        margin: 0 auto; /* Center the container horizontally */
-        padding: 2rem;
-      }
-
-      h1 {
+<style>
+    h1 {
         color: #f4c542;
         text-align: center;
         margin-bottom: 25px;
-      }
+        width: 100%;
+    }
 
-      form {
+    form {
         display: flex;
-        justify-content: center; /* Center form elements horizontally */
-        align-items: center; /* Center form elements vertically */
+        justify-content: center;
+        align-items: center;
         gap: 10px;
         margin-bottom: 30px;
-      }
+        width: 100%;
+        padding: 0 20px; /* Optional padding for readability */
+    }
 
-      .client-id-input {
+    .client-id-input {
         padding: 10px;
         font-size: 1rem;
         width: 60%;
         border: 1px solid #ccc;
         border-radius: 6px;
         margin-right: 10px;
-      }
+    }
 
-      button[type="submit"] {
+    button[type="submit"] {
         background-color: #f4c542;
         color: #fff;
         padding: 10px 20px;
@@ -80,170 +43,164 @@
         border-radius: 6px;
         cursor: pointer;
         font-weight: bold;
-      }
+    }
 
-      button[type="submit"]:hover {
+    button[type="submit"]:hover {
         background-color: #e1b52e;
-      }
+    }
 
-      .warning {
-        text-align: center;
+    .warning {
+       margin-right: 10px;
         color: #cc0000;
         font-style: italic;
         font-size: 1rem;
         margin-top: 20px;
-      }
-
-      /* Styles spécifiques pour le conteneur des résultats */
-      .client-results {
-        max-width: 600px;
         width: 100%;
-        padding: 1.5rem;
+    }
+
+    .client-results {
+        width: 100%;
+        margin-left: 100px;
         background-color: #fff;
         border: 1px solid #ddd;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         border-radius: 8px;
-        margin: 20px auto; /* Centré, avec marge */
-      }
-      
-      /* Titres des sections */
-      .client-results h2 {
+       
+
+    }
+
+    .client-results h2 {
         color: #2c3e50;
         font-size: 1.5em;
         margin-bottom: 12px;
-        border-bottom: 2px solid #f4c542; /* Couleur de votre thème */
+        border-bottom: 2px solid #f4c542;
         padding-bottom: 5px;
-      }
-      
-      /* Style des paragraphes et labels */
-      .client-results p {
+        width: 100%;
+    }
+
+    .client-results p {
         margin: 8px 0;
         display: flex;
         align-items: center;
-        gap: 12px; /* Augmenté pour un espacement clair */
-      }
-      
-      /* Style des labels */
-      .client-results strong {
+        gap: 12px;
+        width: 100%;
+    }
+
+    .client-results strong {
         font-weight: 600;
         color: #333;
-        flex: 0 0 180px; /* Largeur fixe pour alignement */
-        text-align: right; /* Alignement du texte à droite pour uniformité */
-      }
-      
-      /* Style des champs input */
-      .client-results input[type="text"] {
+        flex: 0 0 180px;
+        text-align: right;
+    }
+
+    .client-results input[type="text"] {
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 6px;
         font-size: 1rem;
         background-color: #f9f9f9;
-        flex: 1; /* Prend l'espace restant */
-        max-width: 300px; /* Limite la largeur pour cohérence */
+        flex: 1;
+        max-width: 300px;
         transition: border-color 0.3s ease;
-      }
-      
-      .client-results input[readonly] {
+    }
+
+    .client-results input[readonly] {
         background-color: #f0f0f0;
         cursor: not-allowed;
         color: #555;
-      }
-      
-      /* Effet au survol/focus pour les champs non readonly */
-      .client-results input[type="text"]:hover:not([readonly]),
-      .client-results input[type="text"]:focus {
+    }
+
+    .client-results input[type="text"]:hover:not([readonly]),
+    .client-results input[type="text"]:focus {
         border-color: #f4c542;
         outline: none;
-      }
-      
-      /* Style des sections */
-      .client-results section {
+    }
+
+    .client-results section {
         padding: 15px;
         border-radius: 6px;
         margin-bottom: 15px;
         background-color: #fafafa;
-      }
-      
-      /* Responsive design */
-      @media (max-width: 600px) {
+        width: 100%;
+    }
+
+    @media (max-width: 600px) {
         .client-results p {
-          flex-direction: column;
-          align-items: flex-start;
+            flex-direction: column;
+            align-items: flex-start;
         }
-      
+
         .client-results strong {
-          flex: none; /* Annule la largeur fixe */
-          text-align: left; /* Alignement à gauche pour lisibilité */
-          margin-bottom: 4px; /* Espacement avant l'input */
+            flex: none;
+            text-align: left;
+            margin-bottom: 4px;
         }
-      
+
         .client-results input[type="text"] {
-          max-width: none; /* Pleine largeur sur mobile */
-          width: 100%;
+            max-width: none;
+            width: 100%;
         }
-      
-}
-      
-    </style>
+    }
+</style>
   </head>
   <body>
     {% extends 'base.html' %}
     {% block title %}Fiche Client{% endblock %}
 
     {% block content %}
-    <div class="container content">
-      <h1>Fiche Client</h1>
+    <div>
+    <h1>Fiche Client</h1>
 
-      <form method="POST">
+    <form method="POST">
         {% csrf_token %}
         <input
-          type="text"
-          name="id"
-          class="client-id-input"
-          placeholder="Entrer ID du client"
-          required
+            type="text"
+            name="id"
+            class="client-id-input"
+            placeholder="Entrer ID du client"
+            required
         />
         <button type="submit">Rechercher</button>
-      </form>
+    </form>
 
-      {% if message %}
-      <p>{{ message }}</p>
-      {% elif not client and not request.POST.id %}
-      <p class="warning">Veuillez fournir un ID de client.</p>
-      {% endif %}
+    {% if message %}
+    <p>{{ message }}</p>
+    {% elif not client and not request.POST.id %}
+    <p class="warning">Veuillez fournir un ID de client.</p>
+    {% endif %}
 
-      {% if client %}
-      <div class="container client-results">
+    {% if client %}
+    <div class="client-results">
         <section>
-          <h2>Identification</h2>
-          <p><strong>ID :</strong> <input type="text" value="{{ client.id }}" readonly></p>
+            <h2>Identification</h2>
+            <p><strong>ID :</strong> <input type="text" value="{{ client.id }}" readonly></p>
         </section>
-      
+
         <section>
-          <h2>Notation</h2>
-          <p><strong>Classe de Risque :</strong> <input type="text" value="{{ client.classe }}" readonly></p>
-          <p><strong>PD :</strong> <input type="text" value="{{ client.pd }} %" readonly></p>
-          <p><strong>LGD :</strong> <input type="text" value="{{ client.lgd }}" readonly></p>
-          <p><strong>EAD :</strong> <input type="text" value="{{ client.ead }}" readonly></p>
+            <h2>Notation selon IFRS 9</h2>
+            <p><strong>Classe de Risque :</strong> <input type="text" value="{{ client.classe }}" readonly></p>
+            <p><strong>PD :</strong> <input type="text" value="{{ client.pd }} %" readonly></p>
+            <p><strong>LGD :</strong> <input type="text" value="{{ client.lgd }}" readonly></p>
+            <p><strong>EAD :</strong> <input type="text" value="{{ client.ead }}" readonly></p>
         </section>
-      
+
         <section>
-          <h2>Indicateurs de Risque</h2>
-          <p><strong>ECL :</strong> <input type="text" value="{{ client.ECL }}" readonly></p>
-          <p>
-            <strong>Taux de Provisionnement :</strong>
-            <input type="text" value="{{ client.taux_provisionnement|floatformat:2 }} %" readonly>
-          </p>
-          <p><strong>UL :</strong> <input type="text" value="{{ client.UL }}" readonly></p>
-          <p><strong>RWA :</strong> <input type="text" value="{{ client.RWA }}" readonly></p>
-          <p>
-            <strong>Fonds Propres à Réserver :</strong>
-            <input type="text" value="{{ client.fonds_propres }}" readonly>
-          </p>
+            <h2>Indicateurs Risque</h2>
+            <p><strong>ECL :</strong> <input type="text" value="{{ client.ECL }}" readonly></p>
+            <p>
+                <strong>Taux de Provisionnement :</strong>
+                <input type="text" value="{{ client.taux_provisionnement|floatformat:2 }} %" readonly>
+            </p>
+            <p><strong>UL :</strong> <input type="text" value="{{ client.UL }}" readonly></p>
+            <p><strong>RWA :</strong> <input type="text" value="{{ client.RWA }}" readonly></p>
+            <p>
+                <strong>Fonds Propres à Réserver :</strong>
+                <input type="text" value="{{ client.fonds_propres }}" readonly>
+            </p>
         </section>
-      </div>
-      {% endif %}
     </div>
-    {% endblock %}
+    {% endif %}
+</div>
+{% endblock %}
   </body>
 </html>

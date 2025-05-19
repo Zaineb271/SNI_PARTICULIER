@@ -1,0 +1,400 @@
+# French translations for SNI_RETAIL project
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-14 12:54+0100\n"
+"PO-Revision-Date: 2025-05-14 12:54+0100\n"
+"Last-Translator: \n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "CARTHAGO SCORING 1.0.0"
+msgstr "CARTHAGO SCORING 1.0.0"
+
+msgid "Welcome admin"
+msgstr "Bienvenue admin"
+
+msgid "Data Overview"
+msgstr "Aperçu des données"
+
+msgid "Visualization"
+msgstr "Visualisation"
+
+msgid "Feature Selection"
+msgstr "Sélection des variables"
+
+
+msgid "Modeling"
+msgstr "Modélisation"
+
+msgid "Periodic Risk Evaluation"
+msgstr "Évaluation périodique du risque"
+
+msgid "360° Risk Portfolio View"
+msgstr "Vision 360° du portefeuille risque"
+
+msgid "Client File"
+msgstr "Fiche client"
+
+msgid "Quick Search ..."
+msgstr "Recherche rapide ..."
+
+msgid "Logo"
+msgstr "Logo"
+
+msgid "User"
+msgstr "Utilisateur"
+
+msgid "Folder"
+msgstr "Dossier"
+
+msgid "Full Data Display"
+msgstr "Affichage complet des données"
+
+msgid "Data Preview and Preprocessing"
+msgstr "Aperçu et pré-traitement des données"
+
+msgid "Current Target Variable"
+msgstr "La variable cible actuelle"
+
+msgid "Descriptive Statistics"
+msgstr "Statistiques descriptives"
+
+msgid "Target Variable Selection"
+msgstr "Choix de la variable cible"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Missing Values"
+msgstr "Valeurs manquantes"
+
+msgid "Column"
+msgstr "Colonne"
+
+msgid "Percentage"
+msgstr "Pourcentage"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Impute with mode"
+msgstr "Imputer par mode"
+
+msgid "Impute with mean"
+msgstr "Imputer par moyenne"
+
+msgid "Impute with median"
+msgstr "Imputer par médiane"
+
+msgid "Visualize"
+msgstr "Visualiser"
+
+msgid "Visualization Choices"
+msgstr "Choix des visualisations"
+
+msgid "Pie Chart Visualization"
+msgstr "Visualisation de diagramme circulaire"
+
+msgid "Categorical Distribution Visualization"
+msgstr "Visualisation de la distribution catégorielle"
+
+msgid "Numerical Distribution Visualization"
+msgstr "Visualisation de la distribution numérique"
+
+msgid "Current Target Column"
+msgstr "Colonne cible actuelle"
+
+msgid "Run Calculations"
+msgstr "Exécuter les calculs"
+
+msgid "Dependency Analysis between Categorical Variables and Target Variable"
+msgstr "Analyse de dépendance entre les variables catégorielles et la variable cible"
+
+msgid "The ANOVA test is used to study the dependency relationship of a quantitative variable to a qualitative variable."
+msgstr "Le test ANOVA est utilisé pour étudier le rapport de dépendance d'une variable quantitative à une variable qualitative."
+
+msgid "P-value > 0.05: acceptance of H0, so the default does not depend on the variable. This variable is not important in prediction."
+msgstr "P-value > 0,05 : acceptation de H0 donc le défaut ne dépend pas de la variable. Cette variable n’est pas importante dans la prédiction."
+
+msgid "P-value < 0.05: rejection of H0, so the default criterion depends on the variable. This variable is important in prediction."
+msgstr "P-value < 0,05 : rejet de H0 donc le critère défaut dépend de la variable. Cette variable est importante dans la prédiction."
+
+msgid "Variables"
+msgstr "Variables"
+
+msgid "P_value"
+msgstr "P_value"
+
+msgid "Independence"
+msgstr "Indépendance"
+
+msgid "Dependency Analysis between Numerical Variables and Target Variable"
+msgstr "Analyse de dépendance entre les variables numériques et la variable cible"
+
+msgid "Information Value is a widely used technique in variable selection."
+msgstr "L’information Value est une technique très utilisée dans la sélection des variables."
+
+msgid "When Information Value (IV) increases, the predictive power of the variable increases."
+msgstr "Quand l’information Value (IV) augmente, la puissance prédictive du variable augmente."
+
+msgid "We eliminate variables with an IV < 0.1. For strong predictive power, IV > 0.3 is required."
+msgstr "On élimine les variables qui ont une IV < 0,1. Pour un pouvoir prédictif puissant, il faut que l’IV > 0,3."
+
+msgid "IV"
+msgstr "IV"
+
+msgid "Category"
+msgstr "Catégorie"
+
+msgid "Correlation Matrix"
+msgstr "Matrice de corrélation"
+
+msgid "Correlation is a coefficient that measures the linear dependency between variables."
+msgstr "La corrélation est un coefficient qui mesure la dépendance linéaire entre les variables."
+
+msgid "Correlated Variables"
+msgstr "Variables corrélées"
+
+msgid "Correlation"
+msgstr "Corrélation"
+
+msgid "Column to Delete"
+msgstr "Colonne à supprimer"
+
+msgid "Transition Matrix in Heatmap"
+msgstr "Matrice de transition en heatmap"
+
+msgid "Transition Matrix of Default Probability between Year N and N+1"
+msgstr "Matrice de transition de probabilité de défaut entre l'année N et N+1"
+
+msgid "Generate Transition Matrix"
+msgstr "Générer la matrice de transition"
+
+msgid "Transition Matrix"
+msgstr "Matrice de transition"
+
+msgid "The transition matrix is generated between Year 'N' and 'N+1'."
+msgstr "La matrice de transition est générée entre l'année 'N' et 'N+1'."
+
+msgid "Default Probability"
+msgstr "Probabilité de défaut"
+
+msgid "Model Performance"
+msgstr "Performance du modèle"
+
+msgid "Model Summary"
+msgstr "Résumé du modèle"
+
+msgid "Model Accuracy: {{ accuracy }}"
+msgstr "Exactitude du modèle : {{ accuracy }}"
+
+msgid "Classification Report"
+msgstr "Rapport de classification"
+
+msgid "Confusion Matrix"
+msgstr "Matrice de confusion"
+
+msgid "ROC Curve"
+msgstr "Courbe ROC"
+
+msgid "Estimated Default Probability for 2024"
+msgstr "Probabilité de défaut estimée pour 2024"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "PD 2024"
+msgstr "PD 2024"
+
+msgid "Risk Class"
+msgstr "Classe de risque"
+
+msgid "Risk Comment"
+msgstr "Commentaire risque"
+
+msgid "Estimated Lifetime PD"
+msgstr "PD à vie (Lifetime) estimée"
+
+msgid "PD Lifetime"
+msgstr "PD Lifetime"
+
+msgid "PD Histogram for 2024"
+msgstr "Histogramme PD pour 2024"
+
+msgid "Model Backtesting"
+msgstr "Backtesting du modèle"
+
+msgid "Mean Squared Error (MSE):"
+msgstr "Mean Squared Error (MSE) :"
+
+msgid "R-squared (R²):"
+msgstr "R-squared (R²) :"
+
+msgid "Backtesting between Actual PD and Predicted PD"
+msgstr "Backtesting entre PD réelle et PD prédite"
+
+msgid "Correlations for 2024"
+msgstr "Corrélations pour 2024"
+
+msgid "Inflation"
+msgstr "Inflation"
+
+msgid "Unemployment"
+msgstr "Chômage"
+
+msgid "Growth"
+msgstr "Croissance"
+
+msgid "PD_2024 adjusted based on scenarios"
+msgstr "PD_2024 ajusté selon les scénarios"
+
+msgid "PD"
+msgstr "PD"
+
+msgid "Scenario"
+msgstr "Scénario"
+
+msgid "PD_2024 Initial"
+msgstr "PD_2024 Initial"
+
+msgid "PD_2025 Adjusted"
+msgstr "PD_2025 Ajusté"
+
+msgid "Loss Given Default"
+msgstr "Perte en cas de défaut"
+
+msgid "Loss Given Default Rate"
+msgstr "Taux de perte en cas de défaut"
+
+msgid "LGD Results"
+msgstr "Résultats du LGD"
+
+msgid "LGD Model Results"
+msgstr "Résultats du modèle LGD"
+
+msgid "Classification - Report"
+msgstr "Classification - Rapport"
+
+msgid "Model Errors"
+msgstr "Erreurs du modèle"
+
+msgid "MAE:"
+msgstr "MAE :"
+
+msgid "MSE:"
+msgstr "MSE :"
+
+msgid "RMSE:"
+msgstr "RMSE :"
+
+msgid "R² Score:"
+msgstr "R² Score :"
+
+msgid "LGD Predictions"
+msgstr "Prédictions du LGD"
+
+msgid "LGD Distribution"
+msgstr "Distribution du LGD"
+
+msgid "LGD"
+msgstr "LGD"
+
+msgid "Exposure at Default"
+msgstr "Exposition au moment du défaut"
+
+msgid "CCF and EAD Values"
+msgstr "Valeurs du CCF et EAD"
+
+msgid "EAD"
+msgstr "EAD"
+
+
+msgid "Portfolio Summary"
+msgstr "Résumé du portefeuille"
+
+msgid "Number of Files"
+msgstr "Nombre de dossiers"
+
+msgid "Total EAD"
+msgstr "EAD total"
+
+msgid "Total ECL"
+msgstr "ECL total"
+
+msgid "Total UL"
+msgstr "UL total"
+
+msgid "Total RWA"
+msgstr "RWA total"
+
+msgid "Capital to Reserve"
+msgstr "Fonds propres à réserver"
+
+msgid "Average PD"
+msgstr "PD moyenne"
+
+msgid "Average LGD"
+msgstr "LGD moyenne"
+
+msgid "Global Provision Rate"
+msgstr "Taux de provision global"
+
+msgid "Distribution by Risk Level"
+msgstr "Répartition par niveau de risque"
+
+msgid "ECL"
+msgstr "ECL"
+
+msgid "UL"
+msgstr "UL"
+
+msgid "Risk Indicators"
+msgstr "Indicateurs risque"
+
+msgid "Provisioning Rate"
+msgstr "Taux de provisionnement"
+
+
+msgid "RWA"
+msgstr "RWA"
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "Please provide a client ID."
+msgstr "Veuillez fournir un ID de client."
+
+msgid "Identification"
+msgstr "Identification"
+
+msgid "Rating according to IFRS 9"
+msgstr "Notation selon IFRS 9"
+
+msgid "Data Overview and Preprocessing"
+msgstr "Aperçu des données et prétraitement"
+
+msgid "Database Dimensions"
+msgstr "Database Dimensions"
+
+msgid "Very Good"
+msgstr "Très bonne"
+
+msgid "Good"
+msgstr "Bonne"
+
+msgid "Average"
+msgstr "Moyenne"
+
+msgid "To observe"
+msgstr "A surveiller"
+
+msgid "Excellent"
+msgstr "Excellent"

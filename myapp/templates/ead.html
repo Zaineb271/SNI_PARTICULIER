@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Transition Matrix Heatmap</title>
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -89,60 +88,115 @@
       tr:nth-child(even) {
         background-color: #f9f9f9;
       }
+           .pagination {
+    justify-content: flex-end; /* Aligns items to the right */
+    margin: 20px 0;
+}
+      .pagination .page-item.active .page-link {
+        background-color: #636260;
+        border-color: #4d4c4c;
+        color: #333;
+      }
+      .pagination .page-link {
+        color: #333;
+      }
+      .pagination .page-link:hover {
+        background-color: #83827f;
+        color: #fff;
+      }
     </style>
   </head>
   <body>
-    {% extends 'base.html' %} 
-    {% block title %} Affichage EAD {%endblock%} 
-    {%block content %}
-    <div class="container">
-      <div class="row">
+    {% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Exposure at Default" %}
+{% endblock %}
+
+{% block content %}
+<div >
+    <div class="row">
         <div class="col-md-12">
-          <h2 class="mb-4 text-center" style="color: #d4af37">
-            Modélisation du 'CCF' et 'EAD'
-          </h2>
-          <div class="card">
-            <h2>Valeurs du CCF et EAD</h2>
+            <h2 class="mb-4 text-center" style="color: #d4af37">
+                {% trans "Exposure at Default" %}
+            </h2>
+            <div class="card">
+                <h2>{% trans "CCF and EAD Values" %}</h2>
 
-    {% if message %}
-        <p style="color: red;">{{ message }}</p>
-    {% endif %}
+                {% if message %}
+                    <p style="color: red;">{{ message }}</p>
+                {% endif %}
 
-    {% if ccf_ead_data %}
-        <table>
-            <thead>
-                <tr>
-                    {% for column in columns %}
-                        <th>{{ column }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-              {% for row in ccf_ead_data %}
-              <tr>
-                  {% for value in row %}
-                      {% if forloop.first %}
-                          <td>{{ value }}</td>  {# L'index sans floatformat #}
-                      {% else %}
-                          <td>{{ value|floatformat:6 }}</td>  {# Valeurs formatées #}
-                      {% endif %}
-                  {% endfor %}
-              </tr>
-          {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Aucune donnée à afficher.</p>
-    {% endif %}
+                {% if ccf_ead_data %}
+                    <table>
+                        <thead style="text-align: center;">
+                            <tr>
+                                {% for column in columns %}
+                                    <th>{% trans column %}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in ccf_ead_data %}
+                            <tr>
+                                {% for value in row %}
+                                    {% if forloop.first %}
+                                        <td style="text-align: center;">{{ value }}</td>  {# Index/ID without floatformat #}
+                                    {% else %}
+                                        <td style="text-align: center;">{{ value|floatformat:0 }}</td>  {# Formatted values with 6 decimals #}
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
 
-           
-  
-                      
+                    <!-- Pagination -->
+                    {% if page_obj.has_other_pages %}
+                    <nav aria-label="{% trans 'Pagination' %}">
+                        <ul class="pagination justify-content-flex-end">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="{% trans 'Previous' %}">
+                                    <span aria-hidden="true">«</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">«</span>
+                            </li>
+                            {% endif %}
 
-          </div>
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num >= page_obj.number|add:-1 and num <= page_obj.number|add:1 %}
+                                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="{% trans 'Next' %}">
+                                    <span aria-hidden="true">»</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">»</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                {% else %}
+                    <p>{% trans "No data to display." %}</p>
+                {% endif %}
+            </div>
         </div>
-      </div>
     </div>
-    {% endblock %}
+</div>
+{% endblock %}
   </body>
 </html>
