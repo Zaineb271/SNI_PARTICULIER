@@ -26,9 +26,14 @@
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
             margin-bottom: 20px;
+            width: 100%; /* Agrandir la carte */
+            max-width: 100%; /* Plus large que le conteneur */
+            padding: 2rem; /* Plus d'espace interne */
+            margin-left: 100px; /* Pushes the card to the right */
+            margin-right: 30px; /* Ensures no extra margin on the right */  
         }
         .card h2 {
-            color: #030303;
+            color: black;
         }
         .card-body {
             padding: 20px;
@@ -87,11 +92,11 @@
                 <h2>{% trans "Pie Chart Visualization" %}</h2>
                 <form method="post" class="mb-4">
                     {% csrf_token %}
-                    <p id="cible">
+                     <!--<p id="cible">
                         {% if target_column %}
                             {% trans "Current Target Column" %}: {{ target_column }}
                         {% endif %}
-                    </p>
+                    </p> -->
                     <button type="submit" name="plot_pie_chart" class="btn btn-custom">{% trans "Visualize" %}</button>
                 </form>
                 

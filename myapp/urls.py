@@ -33,6 +33,8 @@ urlpatterns = [
     path('ead/', views.ead_view, name='ead'),  # Ensure this line exists
     path('ead/get_ead_view/', views.get_ead_view, name='get_ead_view'),  # If applicable
     path('evaluation/', views.evaluation_view, name='evaluation'),
+    path('consultationOctroi/', views.consultationOctroi, name='consultationOctroi'),
+    path('générerEtat/', views.générerEtat, name='générerEtat'),
     
     # Vision 360°
     path('vision360/', views.vision360_view, name='vision360'),
@@ -40,6 +42,8 @@ urlpatterns = [
     # Fiche Client
     path('fiche_client/', views.fiche_client_view, name='fiche_client'),
     path('i18n/', include('django.conf.urls.i18n')),
+    path('staging-ifrs9/', views.staging_ifrs9, name='Staging IFRS9'),
+    path('ifrs-client/', views.ifrs_client, name='ifrs_client'),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

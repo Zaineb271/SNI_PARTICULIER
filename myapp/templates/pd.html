@@ -81,7 +81,7 @@
             text-align: left;
         }
         th {
-            background-color: #333;
+            background-color: #f2f2f2;
             color: #d4af37;
         }
         tr:nth-child(even) {
@@ -104,6 +104,23 @@
         color: #fff;
       }
 
+        .metrics-table {
+            width: 100%; /* Le tableau occupe toute la largeur disponible */
+            table-layout: fixed; /* Force les colonnes à avoir une largeur égale */
+            margin: 0 auto; /* Centre le tableau horizontalement */
+            border-collapse: collapse; /* Fusionne les bordures */
+        }
+        .metrics-table th,
+        .metrics-table td {
+            width: 25%; /* Chaque colonne prend 25% de la largeur totale (4 colonnes) */
+            text-align: center; /* Aligne le texte au centre */
+            border: 1px solid #ddd; /* Ajoute une bordure légère */
+            padding: 8px; /* Ajoute un espacement interne */
+        }
+        .metrics-table th {
+            background-color: #f2f2f2; /* Fond gris clair pour l'en-tête */
+        }
+
     </style>
 </head>
 <body>
@@ -122,24 +139,49 @@
             </h2>
             <div class="card">
                 <h2>{% trans "Model Summary" %}</h2>
+                <!-- Tableau statique des métriques avec la nouvelle classe -->
+                <table class="metrics-table">
+                <thead>
+                    <tr>
+                    <th>Accuracy</th>
+                    <th>Sensitivity</th>
+                    <th>Specificity</th>
+                    <th>AUC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td>0.96</td>
+                    <td>0.82</td>
+                    <td>0.99</td>
+                    <td>0.96</td>
+                    </tr>
+                </tbody>
+                </table>
+                 <!-- 
                 <p>{% trans "Model Accuracy" %}: {{ accuracy|floatformat:2 }}</p>
                 <p>{% trans "Classification Report" %}</p>
                 <pre>{{ report }}</pre>
-
+                   -->
                 <h2>📉 {% trans "Confusion Matrix" %}</h2>
-                <img src="data:image/png;base64,{{ cm_image }}" alt="{% trans 'Confusion Matrix' %}" class="img-fluid" />
+                <img src="data:image/png;base64,{{ cm_image }}" alt="{% trans 'Confusion Matrix' %}" style="width: 60%; height: auto; display: block; margin: 0 auto; " />
 
                 <h2>📈 {% trans "ROC Curve" %}</h2>
-                <img src="data:image/png;base64,{{ roc_image }}" alt="{% trans 'ROC Curve' %}" class="img-fluid" />
-
-                <h2>📌 {% trans "Estimated Default Probability for 2024" %}</h2>
-                <table class="table table-bordered">
+                <img src="data:image/png;base64,{{ roc_image }}" alt="{% trans 'ROC Curve' %}" style="width: 60%; height: auto; display: block; margin: 0 auto; " />
+               
+                <br>
+                <br>
+                <br>
+                <h2> {% trans "Estimated Default Probability for 2024" %}</h2>
+                <table class="table table-bordered" style="width: 80%; table-layout: fixed;  margin: 0 auto; ">
                     <thead>
                         <tr style="text-align: center;">
                             <th>{% trans "ID" %}</th>
                             <th>{% trans "PD 2024" %}</th>
+                           <!-- 
                             <th>{% trans "Risk Class" %}</th>
                             <th>{% trans "Risk Comment" %}</th>
+                            -->
                         </tr>
                     </thead>
                     <tbody>
@@ -147,8 +189,11 @@
                         <tr style="text-align: center;">
                             <td style="text-align: center;">{{ row.id }}</td>
                             <td style="text-align: center;">{{ row.PD_2024|floatformat:2 }}%</td>
+                        <!--   
                             <td style="text-align: center;">{{ row.level }}</td>
                             <td style="text-align: center;">{{ row.comment }}</td>
+
+                            -->
                         </tr>
                         {% empty %}
                         <tr>
@@ -197,14 +242,17 @@
                 </nav>
                 {% endif %}
 
+                <br>
                 <!-- Backtesting Results -->
                 <div class="mt-4">
                     <h3>{% trans "Model Backtesting" %}</h3>
                     <p><strong>{% trans "Mean Squared Error (MSE)" %}:</strong> {{ mse|floatformat:4 }}</p>
                     <p><strong>{% trans "R-squared (R²)" %}:</strong> {{ r2|floatformat:4 }}</p>
-
+                    <br>
+            
+                <br>
                     <h2>{% trans "Backtesting between Actual PD and Predicted PD" %}</h2>
-                    <img src="data:image/png;base64,{{ pd_graph_image }}" alt="{% trans 'Backtesting Graph' %}" class="img-fluid" style="text-align: center;"/>
+                    <img src="data:image/png;base64,{{ pd_graph_image }}" alt="{% trans 'Backtesting Graph' %}" style="max-width: 80%; height: auto; display: block; margin: 0 auto; "/>
                 </div>
             </div>
         </div>

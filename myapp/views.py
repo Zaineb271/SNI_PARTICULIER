@@ -1349,6 +1349,10 @@ def pd_view(request):
         id_pd2024_list = PD_2024[['id', 'PD_2024']].to_records(index=False).tolist()
         request.session['id_pd2024_list'] = id_pd2024_list
         print("Données id/PD_2024 stockées dans la session.")
+        
+        id_pd2024_list = PD_2024[['id', 'PD_2024']].to_records(index=False).tolist()
+        request.session['id_pd2024_list'] = id_pd2024_list
+        print("Données id/PD_2024 stockées dans la session.")
 
         # Backtesting
         np.random.seed(42)
@@ -1494,7 +1498,12 @@ def lgd_view(request):
 
         # Preprocess data
         data_defaults = df[df['loan_status'] == 1]  # Filter for loans with binary status = 1
-        data_defaults['recovery_rate'] = data_defaults['recoveries'] / data_defaults['funded_amnt']  # Calculate recovery rate
+        data_defaults['recovery_rate'] = ( data_defaults['recoveries'] +
+        data_defaults['collection_recovery_fee'] +
+        data_defaults['total_rec_late_fee']+data_defaults['total_rec_prncp'] +
+        data_defaults['total_rec_int']
+    )/ (data_defaults['funded_amnt'])
+
         
         # Ensure recovery rate does not exceed 1
         data_defaults['recovery_rate'] = np.where(data_defaults['recovery_rate'] > 1, 1, data_defaults['recovery_rate'])
@@ -1633,7 +1642,7 @@ def lgd_view(request):
         print(data1['LGD'].describe())
         
         # Add LGD distribution to the data passed to the template
-        LGD_distribution = data1['LGD']
+        LGD_distribution = data1['LGD'] * 100
         
         # Create final DataFrame with ID and LGD_distribution
         LGD_result = pd.DataFrame({
@@ -1884,13 +1893,13 @@ def ead_view(request):
             if df.empty:
                 print("The DataFrame is empty.")
                 return render(request, 'ead.html', {'message': "The uploaded file is empty."})
-
+            
             print("The DataFrame contains data.")
-
+    
             # Check and calculate CCF and EAD columns
             if 'funded_amnt' in df.columns:
                 df['CCF'] = 1  # Set CCF to 1 as requested
-                df['EAD'] = 1 * df['funded_amnt']  # Calculate EAD as 1 * funded_amnt
+                df['EAD'] = 1 * df['out_prncp']  # Calculate EAD as 1 * funded_amnt
                 print("Columns 'CCF' and 'EAD' calculated")
             else:
                 print("The column 'funded_amnt' is missing.")
@@ -1957,10 +1966,10 @@ def get_ead_view(request):
             return JsonResponse({"error": "Le fichier chargé est vide."}, status=400)
 
         # Vérification et calcul des colonnes CCF et EAD
-        required_columns = {'total_rec_prncp', 'funded_amnt'}
+        required_columns = {'total_rec_prncp', 'out_prncp'}
         if required_columns.issubset(df.columns):
             df['CCF'] = 1  # df['total_rec_prncp'] / df['funded_amnt']
-            df['EAD'] = df['CCF'] * df['funded_amnt'] 
+            df['EAD'] = df['CCF'] * df['out_prncp'] 
         else:
             return JsonResponse({"error": "Les colonnes 'total_rec_prncp' et 'funded_amnt' sont absentes."}, status=400)
 
@@ -2212,27 +2221,54 @@ def fiche_client_view(request):
         if not client_id:
             return render(request, 'fiche_client.html', {'message': "Veuillez fournir un ID de client."})
 
-        # Récupérer les données depuis la session
+        # Récupérer les données depuis la session pour ead, pd, lgd
         id_ead_list = request.session.get('id_ead_list', [])
         id_pd2024_list = request.session.get('id_pd2024_list', [])
         id_lgd_list = request.session.get('id_lgd_list', [])
 
         # Vérifier si les listes sont vides
         if not id_ead_list or not id_pd2024_list or not id_lgd_list:
-            return render(request, 'fiche_client.html', {'message': "Aucune donnée disponible dans la session."})
+            return render(request, 'fiche_client.html', {'message': "Aucune donnée disponible dans la session pour EAD, PD ou LGD."})
 
-        # Créer les DataFrames
+        # Récupérer les données JSON depuis la session
+        if "uploaded_data" not in request.session:
+            return render(request, 'fiche_client.html', {'message': "Aucune donnée JSON disponible dans la session."})
+
+        # Charger les données JSON depuis la session
+        uploaded_data = pd.read_json(request.session["uploaded_data"])
+
+        # Colonnes requises
+        required_columns = {'id', 'annual_inc', 'grade2024', 'type', 'int_rate', 'total_rec_prncp',
+                           'loan_amnt', 'term', 'installment', 'out_prncp', 'total_rec_int', 'total_pymnt'}
+
+        # Vérifier si toutes les colonnes requises sont présentes
+        missing_columns = required_columns - set(uploaded_data.columns)
+        if missing_columns:
+            return render(request, 'fiche_client.html', {
+                'message': f"Colonnes manquantes dans les données JSON : {', '.join(missing_columns)}"
+            })
+
+        # Créer un DataFrame à partir des données JSON avec les required_columns
+        df_json = uploaded_data[list(required_columns)].copy()
+
+        # Créer les DataFrames pour ead, pd, lgd
         df_ead = pd.DataFrame(id_ead_list, columns=['id', 'ead'])
         df_pd = pd.DataFrame(id_pd2024_list, columns=['id', 'pd'])
         df_lgd = pd.DataFrame(id_lgd_list, columns=['id', 'lgd'])
 
-        # Fusion et traitement
+        # Fusion des DataFrames ead, pd, lgd
         df = df_ead.merge(df_pd, on='id').merge(df_lgd, on='id')
+
+        # Fusion avec les données JSON pour inclure les required_columns
+        df = df.merge(df_json, on='id', how='left')
+
+        # Remplacer les valeurs 'N/A' ou invalides par NaN
         df = df.replace({'pd': {'N/A': np.nan}, 'lgd': {'N/A': np.nan}, 'ead': {'N/A': np.nan}})
         df[['pd', 'lgd', 'ead']] = df[['pd', 'lgd', 'ead']].astype(float)
 
         # Remplissage des NaN
-        df.fillna(df.mean(numeric_only=True), inplace=True)
+        df.fillna(df.mean(numeric_only=True), inplace=True)  # Pour les colonnes numériques
+        df.fillna('N/A', inplace=True)  # Pour les colonnes non numériques (ex. 'type', 'grade2024')
 
         # Calculs
         df['PD'] = df['pd'] / 100
@@ -2254,7 +2290,7 @@ def fiche_client_view(request):
                             (norm.cdf((norm.ppf(row['PD']) + np.sqrt(rho) * z_999) / np.sqrt(1 - rho)) - row['PD']), axis=1)
         df['fonds_propres'] = df['RWA'] * 0.08
 
-        # Fonction get_risk_level_and_comment (exemple si non définie)
+        # Fonction get_risk_level_and_comment
         def get_risk_level_and_comment(pd_val):
             if pd_val > 0.1:
                 return 5, "Risque élevé"
@@ -2282,3 +2318,396 @@ def fiche_client_view(request):
 
     except Exception as e:
         return render(request, 'fiche_client.html', {'message': f"Erreur : {str(e)}"})
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
+import pandas as pd
+import numpy as np
+from io import StringIO
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
+import pandas as pd
+from io import StringIO
+
+def calculate_lifetime_pd(pd_values):
+    # Placeholder function for lifetime PD calculation
+    # For simplicity, return the sum of PD values (you can replace with your actual logic)
+    return sum(pd_values) if pd_values else 0.0
+
+def staging_ifrs9(request):
+    try:
+        # Récupérer les listes depuis la session (populées par construct_session_lists_view)
+        id_pd2024_list = request.session.get('id_pd2024_list', [])
+        id_ead_list = request.session.get('id_ead_list', [])
+        id_lgd_list = request.session.get('id_lgd_list', [])
+       
+        # Charger les données JSON depuis la session
+        if "uploaded_data" not in request.session:
+            return render(request, 'staging_ifrs9.html', {
+                'message': "Aucune donnée JSON disponible dans la session."
+            })
+
+        # Charger les données JSON depuis la session
+        uploaded_data_json = StringIO(request.session.get("uploaded_data", ""))
+        df = pd.read_json(uploaded_data_json)
+
+        if df.empty:
+            return render(request, 'staging_ifrs9.html', {
+                'message': "Le fichier chargé est vide."
+            })
+
+        # Vérifier si les colonnes requises existent
+        required_columns = ['id', 'grade2024', 'out_prncp']
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            return render(request, 'staging_ifrs9.html', {
+                'message': f"Colonnes manquantes dans les données : {', '.join(missing_columns)}."
+            })
+        
+        # Sélectionner uniquement les colonnes requises
+        df = df[required_columns].copy()
+
+        # Convertir les colonnes nécessaires
+        df['id'] = df['id'].astype(int)
+        
+        # Vérifier si les colonnes numériques existent, sinon les initialiser
+        numeric_columns = ['pd', 'lgd', 'ead']
+        for col in numeric_columns:
+            if col not in df.columns:
+                df[col] = 0  # Ou une autre valeur par défaut appropriée
+        
+        df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+        df[numeric_columns] = df[numeric_columns].fillna(df[numeric_columns].mean())
+
+        # Créer les DataFrames à partir des listes, si elles existent
+        if all([id_pd2024_list, id_ead_list, id_lgd_list]):
+            df_pd = pd.DataFrame(id_pd2024_list, columns=['id', 'PD'])
+            df_ead = pd.DataFrame(id_ead_list, columns=['id', 'EAD'])
+            df_lgd = pd.DataFrame(id_lgd_list, columns=['id', 'LGD'])
+        else:
+            # Si les listes ne sont pas disponibles, utiliser des DataFrames vides ou extraits de df
+            df_pd = pd.DataFrame({'id': df['id'], 'PD': df.get('pd', 0)})
+            df_ead = pd.DataFrame({'id': df['id'], 'EAD': df.get('ead', 0)})
+            df_lgd = pd.DataFrame({'id': df['id'], 'LGD': df.get('lgd', 0)})
+
+        # Fusion des DataFrames
+        df_merged = df_pd.merge(df_ead, on='id', how='inner').merge(df_lgd, on='id', how='inner')
+        nouvelle_base = pd.merge(
+            df[['id', 'grade2024', 'out_prncp']],
+            df_merged[['id', 'PD']],
+            on='id',
+            how='inner'
+        )
+
+        # Définir la correspondance des stages
+        correspondance_stage = {
+            'A': 'Bucket 1',
+            'B': 'Bucket 1',
+            'C': 'Bucket 2',
+            'D': 'Bucket 2',
+            'E': 'Bucket 2',
+            'F': 'Bucket 3',
+            'G': 'Bucket 3'
+        }
+        nouvelle_base['stage'] = nouvelle_base['grade2024'].map(correspondance_stage)
+
+        # Fusionner pour ajouter LGD et EAD
+        nouvelle_base_complète = pd.merge(
+            nouvelle_base,
+            df_merged[['id', 'LGD', 'EAD']],
+            on='id',
+            how='inner'
+        )
+
+        # Gestion des PD selon les stages
+        # Stage 1: PD déjà dans id_pd2024_list (en pourcentage, converti en proportion)
+        nouvelle_base_complète.loc[nouvelle_base_complète['stage'] == 'Bucket 1', 'PD'] = (
+            nouvelle_base_complète.loc[nouvelle_base_complète['stage'] == 'Bucket 1', 'PD'] / 100
+        )
+
+        # Stage 2: Calculer PD lifetime
+        stage2_ids = nouvelle_base_complète[nouvelle_base_complète['stage'] == 'Bucket 2']['id'].tolist()
+        for client_id in stage2_ids:
+            pd_values = [nouvelle_base_complète.loc[nouvelle_base_complète['id'] == client_id, 'PD'].iloc[0] / 100]
+            lifetime_pd = calculate_lifetime_pd(pd_values)
+            nouvelle_base_complète.loc[nouvelle_base_complète['id'] == client_id, 'PD'] = lifetime_pd
+
+        # Stage 3: PD = 100% (soit 1.0 en proportion)
+        nouvelle_base_complète.loc[nouvelle_base_complète['stage'] == 'Bucket 3', 'PD'] = 1.0
+
+        # Calculer ECL = PD * LGD * EAD
+        nouvelle_base_complète['ECL'] = nouvelle_base_complète['PD'] * nouvelle_base_complète['LGD'] * nouvelle_base_complète['EAD']
+
+        # Convertir PD et LGD en pourcentage (multiplier par 100) after ECL calculation
+        nouvelle_base_complète['PD'] = nouvelle_base_complète['PD'] * 100
+        nouvelle_base_complète['LGD'] = nouvelle_base_complète['LGD'] 
+
+        # --- Compute Global Staging Data ---
+        global_staging_data = []
+
+        # Bucket 1: Stage 1
+        bucket1 = nouvelle_base_complète[nouvelle_base_complète['stage'] == 'Bucket 1']
+        if not bucket1.empty:
+            num_clients = len(bucket1)
+            outstanding = bucket1['out_prncp'].sum()
+            avg_pd = f"{(bucket1['PD'].mean()):.2f}%"  # PD converted to percentage
+            ecl_n = bucket1['ECL'].mean()
+            ecl_total = nouvelle_base_complète['ECL'].sum()
+            provision_rate = f"{((ecl_n / ecl_total) * 100):.2f}%" if ecl_total > 0 else "0%"
+        else:
+            num_clients = 0
+            outstanding = 0
+            avg_pd = '-'
+            ecl_n = 0
+            provision_rate = "0%"
+        global_staging_data.append({
+            'bucket': 'Bucket 1',
+            'outstanding': outstanding,
+            'impaired_clients': num_clients,
+            'avg_pd': avg_pd,
+            'ecl_n': f"{ecl_n:.2f}",
+            'ecl_n_minus_1': '-',  # Placeholder, as historical data isn't provided
+            'provision_rate': provision_rate
+        })
+
+        # Bucket 2: Stage 2
+        bucket2 = nouvelle_base_complète[nouvelle_base_complète['stage'] == 'Bucket 2']
+        if not bucket2.empty:
+            num_clients = len(bucket2)
+            outstanding = bucket2['out_prncp'].sum()
+            avg_pd = f" {bucket2['PD'].mean():.2f}%"  # PD in percentage
+            ecl_n = bucket2['ECL'].mean()
+            ecl_total = nouvelle_base_complète['ECL'].sum()
+            provision_rate = f"{((ecl_n / ecl_total) * 100):.2f}%" if ecl_total > 0 else "0%"
+        else:
+            num_clients = 0
+            outstanding = 0
+            avg_pd = '-'
+            ecl_n = 0
+            provision_rate = "0%"
+        global_staging_data.append({
+            'bucket': 'Bucket 2',
+            'outstanding': outstanding,
+            'impaired_clients': num_clients,
+            'avg_pd': avg_pd,
+            'ecl_n': f"{ecl_n:.2f}",
+            'ecl_n_minus_1': '-',  # Placeholder, as historical data isn't provided
+            'provision_rate': provision_rate
+        })
+
+        # Bucket 3: Stage 3
+        bucket3 = nouvelle_base_complète[nouvelle_base_complète['stage'] == 'Bucket 3']
+        if not bucket3.empty:
+            num_clients = len(bucket3)
+            outstanding = bucket3['out_prncp'].sum()
+            avg_pd = "100%"  # Fixed PD for Stage 3
+            ecl_n = bucket3['ECL'].mean()
+            ecl_total = nouvelle_base_complète['ECL'].sum()
+            provision_rate = f"{((ecl_n / ecl_total) * 100):.2f}%" if ecl_total > 0 else "0%"
+        else:
+            num_clients = 0
+            outstanding = 0
+            avg_pd = "100%"
+            ecl_n = 0
+            provision_rate = "0%"
+        global_staging_data.append({
+            'bucket': 'Bucket 3',
+            'outstanding': outstanding,
+            'impaired_clients': num_clients,
+            'avg_pd': avg_pd,
+            'ecl_n': f"{ecl_n:.2f}",
+            'ecl_n_minus_1': '-',  # Placeholder, as historical data isn't provided
+            'provision_rate': provision_rate
+        })
+
+        # Convertir le DataFrame en dictionnaire pour le template
+        result = nouvelle_base_complète.to_dict('records')
+
+        # Pagination
+        paginator = Paginator(result, 20)  # Show 20 clients per page
+        page_number = request.GET.get('staging_ifrs9_page', 1)
+        try:
+            staging_ifrs9_page_obj = paginator.page(page_number)
+        except PageNotAnInteger:
+            staging_ifrs9_page_obj = paginator.page(1)
+        except EmptyPage:
+            staging_ifrs9_page_obj = paginator.page(paginator.num_pages)
+
+        return render(request, 'staging_ifrs9.html', {
+            'global_staging_data': global_staging_data,
+            'clients': staging_ifrs9_page_obj,
+            'staging_ifrs9_page_obj': staging_ifrs9_page_obj,
+            'message': None
+        })
+
+    except ValueError as ve:
+        return render(request, 'staging_ifrs9.html', {
+            'message': f"Erreur de conversion : {str(ve)}"
+        })
+    except KeyError as ke:
+        return render(request, 'staging_ifrs9.html', {
+            'message': f"Clé manquante : {str(ke)}"
+        })
+    except Exception as e:
+        return render(request, 'staging_ifrs9.html', {
+            'message': f"Erreur inattendue : {str(e)}"
+        })
+
+# Vue pour la page "Client File" (unchanged)
+from django.shortcuts import render
+from django.http import HttpResponseBadRequest
+import pandas as pd
+from io import StringIO
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from io import StringIO
+import pandas as pd
+
+from django.shortcuts import render
+import pandas as pd
+from io import StringIO
+
+from django.shortcuts import render
+import pandas as pd
+from io import StringIO
+
+def ifrs_client(request):
+    try:
+        # Initialize variables
+        client = None
+        message = None
+        submitted_id = None
+
+        # Handle both GET and POST requests
+        client_id = request.POST.get('id') or request.GET.get('id')
+        if not client_id or not client_id.strip().isdigit():
+            message = "Veuillez fournir un ID de client valide."
+            submitted_id = client_id if client_id else ''
+        else:
+            submitted_id = int(client_id)
+
+            # Load data from session (assuming it’s populated similarly to staging_ifrs9)
+            if "uploaded_data" not in request.session:
+                message = "Aucune donnée disponible dans la session."
+            else:
+                uploaded_data_json = StringIO(request.session.get("uploaded_data", ""))
+                df = pd.read_json(uploaded_data_json)
+
+                if df.empty:
+                    message = "Le fichier chargé est vide."
+                else:
+                    # Ensure required columns exist
+                    required_columns = ['id', 'grade2024', 'out_prncp']
+                    missing_columns = [col for col in required_columns if col not in df.columns]
+                    if missing_columns:
+                        message = f"Colonnes manquantes dans les données : {', '.join(missing_columns)}."
+                    else:
+                        # Prepare the base DataFrame with additional metrics
+                        df = df[required_columns].copy()
+                        df['id'] = df['id'].astype(int)
+
+                        # Initialize numeric columns if not present
+                        numeric_columns = ['pd', 'lgd', 'ead']
+                        for col in numeric_columns:
+                            if col not in df.columns:
+                                df[col] = 0
+                        df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
+                        df[numeric_columns] = df[numeric_columns].fillna(df[numeric_columns].mean())
+
+                        # Merge with session data (assuming pd, lgd, ead lists exist)
+                        id_pd2024_list = request.session.get('id_pd2024_list', [])
+                        id_ead_list = request.session.get('id_ead_list', [])
+                        id_lgd_list = request.session.get('id_lgd_list', [])
+
+                        if all([id_pd2024_list, id_ead_list, id_lgd_list]):
+                            df_pd = pd.DataFrame(id_pd2024_list, columns=['id', 'PD'])
+                            df_ead = pd.DataFrame(id_ead_list, columns=['id', 'EAD'])
+                            df_lgd = pd.DataFrame(id_lgd_list, columns=['id', 'LGD'])
+                        else:
+                            df_pd = pd.DataFrame({'id': df['id'], 'PD': df.get('pd', 0)})
+                            df_ead = pd.DataFrame({'id': df['id'], 'EAD': df.get('ead', 0)})
+                            df_lgd = pd.DataFrame({'id': df['id'], 'LGD': df.get('lgd', 0)})
+
+                        nouvelle_base = pd.merge(
+                            df[['id', 'grade2024', 'out_prncp']],
+                            df_pd[['id', 'PD']],
+                            on='id',
+                            how='inner'
+                        )
+                        nouvelle_base_complète = pd.merge(
+                            nouvelle_base,
+                            df_ead[['id', 'EAD']],
+                            on='id',
+                            how='inner'
+                        ).merge(
+                            df_lgd[['id', 'LGD']],
+                            on='id',
+                            how='inner'
+                        )
+
+                        # Define staging mapping
+                        correspondance_stage = {
+                            'A': 'stage1',
+                            'B': 'stage1',
+                            'C': 'stage2',
+                            'D': 'stage2',
+                            'E': 'stage2',
+                            'F': 'stage3',
+                            'G': 'stage3'
+                        }
+                        nouvelle_base_complète['stage'] = nouvelle_base_complète['grade2024'].map(correspondance_stage)
+
+                        # Adjust PD based on staging
+                        nouvelle_base_complète.loc[nouvelle_base_complète['stage'] == 'stage1', 'PD'] = (
+                            nouvelle_base_complète.loc[nouvelle_base_complète['stage'] == 'stage1', 'PD'] / 100
+                        )
+                        stage2_ids = nouvelle_base_complète[nouvelle_base_complète['stage'] == 'stage2']['id'].tolist()
+                        for client_id in stage2_ids:
+                            pd_values = [nouvelle_base_complète.loc[nouvelle_base_complète['id'] == client_id, 'PD'].iloc[0] / 100]
+                            lifetime_pd = sum(pd_values)  # Placeholder for lifetime PD
+                            nouvelle_base_complète.loc[nouvelle_base_complète['id'] == client_id, 'PD'] = lifetime_pd
+                        nouvelle_base_complète.loc[nouvelle_base_complète['stage'] == 'stage3', 'PD'] = 1.0
+
+                        # Calculate ECL
+                        nouvelle_base_complète['ECL'] = nouvelle_base_complète['PD'] * nouvelle_base_complète['LGD'] * nouvelle_base_complète['EAD']
+
+                        # Convert PD and LGD back to percentage for display
+                        nouvelle_base_complète['PD'] = nouvelle_base_complète['PD'] * 100
+                        nouvelle_base_complète['LGD'] = nouvelle_base_complète['LGD'] * 100
+
+                        # Find the client
+                        client_data = nouvelle_base_complète[nouvelle_base_complète['id'] == submitted_id]
+                        if not client_data.empty:
+                            client = client_data.iloc[0].to_dict()
+                            client['PD TTC'] = f"{client['PD']:.2f}%"  # PD in percentage
+                            client['staging'] = client.get('stage', 'Unknown')
+                            client['PD Life Time'] = f"{client['PD']:.2f}%" if client['stage'] == 'stage2' else '-'
+                            client['ECL'] = f"{client['ECL']:.2f}"
+                            client['Nombre de contrats financés'] = 1  # Placeholder, adjust if actual data exists
+                        else:
+                            message = "ID client non trouvé."
+                            
+
+
+
+        context = {
+            'client': client,
+            'message': message,
+            'submitted_id': submitted_id
+        }
+        return render(request, 'ifrs_client.html', context)
+
+    except ValueError as ve:
+        return render(request, 'ifrs_client.html', {'message': f"Erreur de conversion des données : {str(ve)}"})
+    except KeyError as ke:
+        return render(request, 'ifrs_client.html', {'message': f"Clé manquante : {str(ke)}"})
+    except Exception as e:
+        return render(request, 'ifrs_client.html', {'message': f"Erreur inattendue : {str(e)}"})
+
+
+def consultationOctroi(request):
+    return render(request, 'consultationOctroi.html')
+
+def générerEtat(request):
+    return render(request, 'générerEtat.html')

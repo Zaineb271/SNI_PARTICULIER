@@ -4,117 +4,218 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f5f5f5;
-            font-family: 'Arial', sans-serif;
-        }
-        div.container {
-            margin-top: 10px;
-            max-width: 80%;
-            margin-right: 0px;
-            padding: 2rem;
-        }
-        .card {
-        background-color: #222;
-        color: #090909;
+<style>
+    body {
+        background-color: #f5f5f5;
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+
+
+    div.container {
+        margin-top: 10px;
+        padding: 2rem;
+        width: 6000%; /* Full width of the remaining space */
+        margin-right: 30px;
+        max-width: 80%;
+        
+
+    }
+
+.card {
+    background-color: #222;
+    color: #090909;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    width: 100%; /* Agrandir la carte */
+    max-width: 100%; /* Plus large que le conteneur */
+    padding: 2rem; /* Plus d'espace interne */
+    margin-left: 100px; /* Pushes the card to the right */
+    margin-right: 30px; /* Ensures no extra margin on the right */
+}
+
+    .card h5.section-title {
+        color: #d4af37;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .table {
+        color: #fff;
+        background-color: #333;
+    }
+
+    .table thead th {
+        color: #000000;
+         background-color: #f2f2f2;
+        border-color: #555;
+    }
+
+    .table tbody td {
+        color: #080808;
+        background-color: #f9f7f7;
+        border-color: #555;
+    }
+
+    #target_column {
+        width: 100%;
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .btn-custom {
+        background-color: #d4af37;
+        color: #222;
         border: none;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-size: 0.15rem;
+        font-weight: bold;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .btn-custom:hover {
+        background-color: #b58e2b;
+        color: #fff;
+    }
+
+    .alert {
+        border-radius: 5px;
         margin-bottom: 20px;
-        width: 100%; /* Agrandir la carte */
-        max-width: 100%; /* Plus large que le conteneur */
-        margin-right: 0px;
+    }
 
+    pre {
+        background-color: #fffbfb;
+        color: #fff;
+        padding: 10px;
+        border: 1px solid #444;
+        border-radius: 5px;
+    }
 
-        }
-        .card h5.section-title {
-            color: #d4af37;
+   /* Style for the pre element containing the table */
+#tab {
+    display: block;
+    width: 100%;
+    max-width: 1400px; /* Matches your container max-width */
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Arial', sans-serif; /* Clean, readable font */
+    font-size: 1rem;
+    line-height: 1.5;
+    overflow-x: auto; /* Horizontal scroll for small screens */
+    white-space: pre-wrap; /* Allow text wrapping for better readability */
+}
 
-        }
-        .card-body {
-            padding: 2rem; /* Plus d'espace pour une carte plus grande */
+/* If data_full is an HTML table, style it */
+#tab table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+}
 
-        }
-        .table {
-            color: #fff;
-            background-color: #333;
-        }
-        .table thead th {
-            color: #000000;
-            background-color: #ccc;
-            border-color: #555;
-        }
-        .table tbody td {
-            color: #080808;
-            background-color: #f9f7f7;
-            border-color: #555;
-        }
-        #target_column {
-            width: 100%;
-            padding: 10px;
-            margin: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .btn-custom {
-            background-color: #d4af37;
-            color: #222;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            font-size: 0.15rem;
-            font-weight: bold;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .btn-custom:hover {
-            background-color: #b58e2b;
-            color: #fff;
-        }
-        .alert {
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        pre {
-            background-color: #fffbfb;
-            color: #fff;
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 5px;
-        }
-        #tab {
-            background-color: #fff;
-            color: #333;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: medium;
-            max-height: 400px; /* Plus grand pour accompagner la carte */
-            overflow: auto;
-            white-space: pre;
-            border: 1px solid #555;
-            border-radius: 5px;
-            line-height: 1.5;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-        }
-        .form-inline .form-control {
-            width: auto;
-            display: inline-block;
-        }
-        #cible {
-            color: #222;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        #target_column {
-            width: 100%;
-            padding: 10px;
-            margin: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-    </style>
+#tab table th,
+#tab table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+#tab table th {
+    background-color: #979292; /* Matches your theme color */
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#tab table td {
+    color: #333;
+}
+
+#tab table tr:hover {
+    background-color: #f9f9f9; /* Subtle hover effect */
+    transition: background-color 0.3s ease;
+}
+
+/* If data_full is plain text (e.g., space-separated columns), style it */
+#tab:not(:has(table)) {
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+#tab:not(:has(table))::before {
+    content: "Tableau de données formaté :";
+    display: block;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+#tab:not(:has(table)) span {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 2px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #tab {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    #tab table th,
+    #tab table td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    #tab:not(:has(table)) span {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 600px) {
+    #tab {
+        font-size: 0.85rem;
+    }
+
+    #tab table th,
+    #tab table td {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+}
+    .form-inline .form-control {
+        width: auto;
+        display: inline-block;
+    }
+
+    #cible {
+        color: #222;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+</style>
 </head>
 <body>
     {% extends 'base.html' %}
@@ -129,7 +230,7 @@
                 <h1 class="mb-4 text-center" style="color: #d4af37;">{% trans "Data Overview and Preprocessing" %}</h1>
                 <div class="card">
                     <div class="card-body">
-                        {% if current_column %}
+                       <!-- {% if current_column %}
                             <div id="cible">
                                 {% trans "Current Target Variable" %}: {{ current_column }}
                             </div>
@@ -141,7 +242,7 @@
 
                             <p>{{ formatted_shape }}</p>
                         </div>
-                        <!-- Affichage des données sous forme de texte formaté -->
+                       
                         <div class="section">
                             <h5 class="section-title">{% trans "Full Data Display" %}</h5>
                             <pre id="tab">{{ data_full|safe }}</pre>
@@ -150,32 +251,32 @@
                          <div class="section">
                                 <h5 class="section-title">Statistiques descriptives</h5>
                                 <pre >{{overview.descriptive_stats | safe}}</pre>
-                            </div> 
-                    
+                            </div> -->
+                   
                         <!-- Missing Values -->
                         <div class="section mt-3">
-                            <h5 class="section-title">{% trans "Missing Values" %}</h5>
-                            <table class="table table-striped table-bordered">
-                                <thead>
-                                    <tr style="text-align: center;">
-                                        <th>{% trans "Column" %}</th>
-                                        <th>{% trans "Percentage" %}</th>
+                            <h3 class="section-title" style="color: #d4af37;">{% trans "Missing Values" %}</h3>
+                            <table class="table table-striped table-bordered" style="width: 100%; table-layout: fixed;">
+                                <thead style="color:#f2f2f2; ">
+                                    <tr style="text-align: center; width: 25%;">
+                                        <th>{% trans "Variables" %}</th>
+                                        <th>{% trans "% des valeurs manquantes" %}</th>
                                         <th colspan="4">{% trans "Action" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for column, missing in overview.missing_values.items %}
                                     <tr>
-                                        <td>{{ column }}</td>
-                                        <td>{{ missing|floatformat:2 }} %</td>
-                                        <td>
+                                        <td style="text-align: center; width: 25%;">{{ column }}</td>
+                                        <td style="text-align: center; width: 25%;">{{ missing|floatformat:2 }} %</td>
+                                        <td style="text-align: center; width: 25%;">
                                             <form method="post" action="{% url 'overview' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="column_to_remove" value="{{ column }}">
                                                 <button type="submit" class="btn btn-danger btn-sm">{% trans "Delete" %}</button>
                                             </form>
                                         </td>
-                                        <td>
+                                        <td style="text-align: center; width: 25%;">
                                             <form method="post" action="{% url 'overview' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="column_to_process" value="{{ column }}">
@@ -183,7 +284,7 @@
                                                 <button type="submit" class="btn btn-custom btn-sm" style="background-color: #fac721;">{% trans "Impute with Mean" %}</button>
                                             </form>
                                         </td>
-                                        <td>
+                                        <td style="text-align: center; width: 25%;">
                                             <form method="post" action="{% url 'overview' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="column_to_process" value="{{ column }}">
@@ -191,7 +292,7 @@
                                                 <button type="submit" class="btn btn-custom btn-sm">{% trans "Impute with Mode" %}</button>
                                             </form>
                                         </td>
-                                        <td>
+                                        <td style="text-align: center; width: 25%;">
                                             <form method="post" action="{% url 'overview' %}">
                                                 {% csrf_token %}
                                                 <input type="hidden" name="column_to_process" value="{{ column }}">
@@ -206,7 +307,7 @@
                         </div>
                         <!-- Target Variable Selection -->
                         <div class="section mt-3">
-                            <h5 class="section-title">{% trans "Target Variable Selection" %}</h5>
+                            <h3 class="section-title" style="color: #d4af37;">{% trans "Target Variable Selection" %}</h3>
                             <form method="post">
                                 {% csrf_token %}
                                 <select name="target_column" id="target_column">

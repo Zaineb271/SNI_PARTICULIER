@@ -369,9 +369,6 @@ msgstr "RWA"
 msgid "Search"
 msgstr "Search"
 
-msgid "Please provide a client ID."
-msgstr "Please provide a client ID."
-
 msgid "Identification"
 msgstr "Identification"
 
@@ -398,3 +395,63 @@ msgstr "To observe"
 
 msgid "Excellent"
 msgstr "Excellent"
+
+msgid "Enter Client ID"
+msgstr "Enter Client ID"
+
+msgid "Please provide a valid Client ID."
+msgstr "Please provide a valid Client ID."
+
+msgid "General Information"
+msgstr "General Information"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Annual Revenue"
+msgstr "Annual Revenue"
+
+msgid "Central Bank Class"
+msgstr "Central Bank Class"
+
+msgid "Financing Type"
+msgstr "Financing Type"
+
+msgid "Engagement Details"
+msgstr "Engagement Details"
+
+msgid "Loan Amount"
+msgstr "Loan Amount"
+
+msgid "Repayment Term"
+msgstr "Repayment Term"
+
+msgid "Effective Interest Rate"
+msgstr "Effective Interest Rate"
+
+msgid "Monthly Payment"
+msgstr "Monthly Payment"
+
+msgid "Repayment Capacity"
+msgstr "Repayment Capacity"
+
+msgid "Remaining Capital Due"
+msgstr "Remaining Capital Due"
+
+msgid "Principal Paid"
+msgstr "Principal Paid"
+
+
+msgid "Interest Paid"
+msgstr "Interest Paid"
+
+
+msgid "Total Repayment"
+msgstr "Total Repayment"
+
+msgid "Regulatory Indicators"
+msgstr "Regulatory Indicators"
+
+#: templates/fiche_client.html:120
+msgid "Capital Reserves Required"
+msgstr "Capital Reserves Required"

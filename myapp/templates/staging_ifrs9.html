@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        color: #333;
+      }
+      div.container.content {
+        margin-left: 350px;
+      }
+      div.container {
+        margin-top: 10px;
+        margin-left: 180px;
+        max-width: 80%;
+        padding: 2rem;
+      }
+      .container {
+        padding-left: 200px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      h1,
+      h2 {
+        color: #333;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #d4af37;
+        padding-bottom: 10px;
+        text-align: center;
+      }
+      h1 {
+        color: #f4c542;
+      }
+      h2 {
+        color: #333;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      label {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button[type="submit"] {
+        background-color: #f4c542;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      button[type="submit"]:hover {
+        background-color: #e1b52e;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        margin-right: 0px;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+         background-color: #f2f2f2;
+        color: #d4af37;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+
+      table {
+        width: 60%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+    
+      th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ccc;
+      }
+    
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+    
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+    
+      td:first-child {
+        font-weight: bold;
+        color: #333;
+      }
+    
+      td:last-child {
+        text-align: right;
+        color: #004085;
+      }
+    
+      caption {
+        caption-side: top;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #0056b3;
+      }
+
+           .pagination {
+    justify-content: flex-end; /* Aligns items to the right */
+    margin: 20px 0;
+}
+      .pagination .page-item.active .page-link {
+        background-color: #636260;
+        border-color: #4d4c4c;
+        color: #333;
+      }
+      .pagination .page-link {
+        color: #333;
+      }
+      .pagination .page-link:hover {
+        background-color: #83827f;
+        color: #fff;
+      }
+      
+      .full-width-table {
+        width: 100%; 
+        margin: 20px 0; 
+        box-sizing: border-box; 
+    }
+    </style>
+  </head>
+
+  <body>
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Staging IFRS9" %}
+{% endblock %}
+
+
+{% block content %}
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
+    <!-- New Table: Global View of IFRS Staging -->
+    <h1>{% trans "Global View of IFRS Staging" %}</h1>
+    <br>
+    {% if global_staging_data %}
+        <table style="width: 80%; table-layout: fixed;  margin: 0 auto; ">
+            <thead>
+                <tr>
+                    <th style="text-align: center;">{% trans "Breakdown by Number of Stages" %}</th>
+                    <th style="text-align: center;">{% trans "Number of Impaired Clients" %}</th>
+                    <th style="text-align: center;">{% trans "Outstanding" %}</th>
+                    <th style="text-align: center;">{% trans "Average PD TTC 12 months" %}</th>
+                    <th style="text-align: center;">{% trans "ECL N" %}</th>
+                    <th style="text-align: center;">{% trans "ECL N-1" %}</th>
+                    <th style="text-align: center;">{% trans "Provision Rate per Stage" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bucket in global_staging_data %}
+                    <tr>
+                        <td style="text-align: center;">{% trans bucket.bucket %}</td>
+                        <td style="text-align: center;">{{ bucket.impaired_clients }}</td>
+                        <td style="text-align: center;">{{ bucket.outstanding|floatformat:2 }}</td>
+                        <td style="text-align: center;">{{ bucket.avg_pd }}</td>
+                        <td style="text-align: center;">{{ bucket.ecl_n }}</td>
+                        <td style="text-align: center;">{{ bucket.ecl_n_minus_1 }}</td>
+                        <td style="text-align: center;">{{ bucket.provision_rate }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{% trans "No global staging data available." %}</p>
+    {% endif %}
+
+    <!-- Existing Detailed View -->
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+    <h1>{% trans "A detailed view of the staging" %}</h1>
+    <br>
+    {% if clients %}
+        <table style="width: 100%; 
+        margin: 20px 0; 
+        box-sizing: border-box; ">
+            <thead>
+                <tr>
+                    <th style="text-align: center;">{% trans "ID" %}</th>
+                    <!--<th style="text-align: center;">{% trans "Encours" %}</th>-->
+                    <th style="text-align: center;">{% trans "Bucket" %}</th>
+                    <th style="text-align: center;">{% trans "PD" %}</th>
+                    <th style="text-align: center;">{% trans "LGD" %}</th>
+                    <th style="text-align: center;">{% trans "EAD" %}</th>
+                    <th style="text-align: center;">{% trans "ECL" %}</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                    <tr>
+                        <td style="text-align: center;">{{ client.id }}</td>
+                        <!--<td style="text-align: center;">{{ client.out_prncp|floatformat:0 }}</td>-->
+                        <td style="text-align: center;">{{ client.stage }}</td>
+                        <td style="text-align: center;">{{ client.PD|floatformat:2 }} %</td>
+                        <td style="text-align: center;">{{ client.LGD|floatformat:2 }} %</td>
+                        <td style="text-align: center;">{{ client.EAD|floatformat:0 }}</td>
+                        <td style="text-align: center;">{{ client.ECL|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination for Vision 360° du portefeuille -->
+        {% if staging_ifrs9_page_obj.has_other_pages %}
+        <nav aria-label="{% trans 'Pagination' %}">
+            <ul class="pagination justify-content-flex-end">
+                {% if vision360_page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?staging_ifrs9_page={{ staging_ifrs9_page_obj.previous_page_number }}{% if indicators_page_obj.number %}&indicators_page={{ indicators_page_obj.number }}{% endif %}" aria-label="{% trans 'Previous' %}">
+                        <span aria-hidden="true">«</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">«</span>
+                </li>
+                {% endif %}
+
+                {% for num in staging_ifrs9_page_obj.paginator.page_range %}
+                    {% if num >= staging_ifrs9_page_obj.number|add:-1 and num <= staging_ifrs9_page_obj.number|add:1 %}
+                    <li class="page-item {% if staging_ifrs9_page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?staging_ifrs9_page={{ num }}{% if indicators_page_obj.number %}&indicators_page={{ indicators_page_obj.number }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if staging_ifrs9_page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?staging_ifrs9_page={{ staging_ifrs9_page_obj.next_page_number }}{% if indicators_page_obj.number %}&indicators_page={{ indicators_page_obj.number }}{% endif %}" aria-label="{% trans 'Next' %}">
+                        <span aria-hidden="true">»</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">»</span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        {% else %}
+        <p>{% trans "No data available." %}</p>
+    {% endif %}
+{% endblock %}
+    
+  </body>
+  
+</html>

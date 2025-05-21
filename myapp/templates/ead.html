@@ -82,7 +82,7 @@
         text-align: left;
       }
       th {
-        background-color: #333;
+         background-color: #f2f2f2;
         color: #d4af37;
       }
       tr:nth-child(even) {
@@ -104,6 +104,22 @@
         background-color: #83827f;
         color: #fff;
       }
+        .credit-table {
+    width: 70%; /* Le tableau occupe toute la largeur disponible */
+    table-layout: fixed; /* Force les colonnes à avoir une largeur égale */
+    margin: 0 auto; /* Centre le tableau horizontalement */
+    border-collapse: collapse; /* Fusionne les bordures */
+  }
+  .credit-table th,
+  .credit-table td {
+    width: 33.33%; /* Trois colonnes, donc 33.33% chacune */
+    text-align: center; /* Aligne le texte au centre */
+    border: 1px solid #ddd; /* Ajoute une bordure légère */
+    padding: 8px; /* Ajoute un espacement interne */
+  }
+  .credit-table th {
+    background-color: #f2f2f2; /* Fond gris clair pour l'en-tête */
+  }
     </style>
   </head>
   <body>
@@ -121,15 +137,47 @@
             <h2 class="mb-4 text-center" style="color: #d4af37">
                 {% trans "Exposure at Default" %}
             </h2>
+ 
+          <br>
+          <br>
+            <table class="credit-table">
+            <thead>
+              <tr>
+                <th>Type de crédit</th>
+                <th>CCF moyen</th>
+                <th>Total EAD</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Découvert</td>
+                <td>1</sub></td>
+                <td>3 726 058.00</td>
+              </tr>
+              <tr>
+                <td>Autorisation</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>Autre</td>
+                <td> - </td>
+                <td>-</td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <br>
+          <br>
             <div class="card">
-                <h2>{% trans "CCF and EAD Values" %}</h2>
+                <h2 style="text-align: center;">{% trans "CCF and EAD Values" %}</h2>
 
                 {% if message %}
                     <p style="color: red;">{{ message }}</p>
                 {% endif %}
 
                 {% if ccf_ead_data %}
-                    <table>
+                    <table  style="width: 80%; table-layout: fixed;  margin: 0 auto; ">
                         <thead style="text-align: center;">
                             <tr>
                                 {% for column in columns %}

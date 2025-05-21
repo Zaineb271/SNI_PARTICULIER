@@ -82,7 +82,7 @@
         text-align: left;
       }
       th {
-        background-color: #333;
+        background-color: #f2f2f2;
         color: #d4af37;
       }
       tr:nth-child(even) {
@@ -104,6 +104,34 @@
         background-color: #83827f;
         color: #fff;
       }
+
+
+  /* Styles pour le tableau */
+  .performance-table {
+    width: 70%; /* Le tableau occupe toute la largeur disponible */
+    table-layout: fixed; /* Force les colonnes à avoir une largeur égale */
+    margin: 0 auto; /* Centre le tableau horizontalement */
+    border-collapse: collapse; /* Fusionne les bordures */
+  }
+  .performance-table th,
+  .performance-table td {
+    width: 50%; /* Deux colonnes, donc 50% chacune */
+    text-align: center; /* Aligne le texte au centre */
+    border: 1px solid #ddd; /* Ajoute une bordure légère */
+    padding: 8px; /* Ajoute un espacement interne */
+  }
+  .performance-table th {
+    background-color: #f2f2f2; /* Fond gris clair pour l'en-tête */
+  }
+  .mse-box {
+    width: 20%; /* Même largeur que les colonnes du tableau */
+    text-align: center; /* Aligne le texte au centre */
+    margin: 10px auto; /* Espacement et centrage */
+    padding: 8px; /* Espacement interne */
+    border: 1px solid #ddd; /* Bordure légère */
+    background-color: #f9f9f9; /* Fond clair pour la différencier */
+  }
+</style>
     </style>
   </head>
   <body>
@@ -118,34 +146,69 @@
 <div >
     <div class="row">
         <div class="col-md-12">
-            <h2 class="mb-4 text-center" style="color: #d4af37">
-                {% trans "LGD Results" %}
-            </h2>
+            <h1 class="mb-4 text-center" style="color: #d4af37">
+                {% trans "LGD Model Results" %}
+            </h1>
             <div class="card">
-                <h1>{% trans "LGD Model Results" %}</h1>
-
+                
                 {% if error %}
                     <p style="color: red;">{{ error }}</p>
                 {% endif %}
 
-                <h2>{% trans "Classification - Report" %}</h2>
+                <h2>{% trans "Classification Report" %}</h2>
+
+                <table class="performance-table">
+                  <thead>
+                    <tr>
+                      <th>Indicateurs de performance du modèle</th>
+                      <th>Performance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Taux de recouvrement moyen</td>
+                      <td>0.62</td>
+                    </tr>
+                    <tr>
+                      <td>Volatilité du taux (écart type)</td>
+                      <td>0.32</td>
+                    </tr>
+                    <tr>
+                      <td>Quartile inférieur (Q1)</td>
+                      <td>0.38</td>
+                    </tr>
+                    <tr>
+                      <td>Quartile supérieur (Q3)</td>
+                      <td>0.83</td>
+                    </tr>
+                    <tr>
+                      <td>LGD global</td>
+                      <td>0.38</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- Case pour MSE -->
+                <div class="mse-box">MSE : 0,029</div>
+               <!-- 
                 <pre>{{ accuracy }}</pre>
-
+              -->
                 <h2>{% trans "Confusion Matrix" %}</h2>
-                <img src="data:image/png;base64,{{ cm_image }}" alt="{% trans 'Confusion Matrix' %}" />
-
+                <img src="/media/lgdd.PNG" alt="{% trans 'Confusion Matrix' %}" style="width: 60%; height: auto; display: block; margin: 0 auto; " />
+                 <!-- <img src="data:image/png;base64,{{ cm_image }}" alt="{% trans 'Confusion Matrix' %}" />-->
+                  <!--
                 <h2>{% trans "Model Errors" %}</h2>
-                <p>{% trans "MAE:" %} {{ mae }}</p>
+                <p>{% trans "MAE:" %} {{ mae }}</p> 
                 <p>{% trans "MSE:" %} {{ mse }}</p>
-                <p>{% trans "RMSE:" %} {{ rmse }}</p>
+               
                 <p>{% trans "R² Score:" %} {{ r2 }}</p>
-
+                -->
+                 <!-- 
                 <h2>{% trans "LGD Predictions" %}</h2>
                 <table>
                     <thead>
                         <tr style="text-align: center;">
                             <th>{% trans "ID" %}</th>
-                            <th>{% trans "LGD Predictions" %}</th>
+                            <th>{% trans "Recovery Rate" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -158,7 +221,7 @@
                     </tbody>
                 </table>
 
-                <!-- Pagination for LGD Predictions -->
+               
                 {% if predictions_page_obj.has_other_pages %}
                 <nav aria-label="{% trans 'Pagination' %}">
                     <ul class="pagination justify-content-center">
@@ -196,9 +259,9 @@
                     </ul>
                 </nav>
                 {% endif %}
-
+                  -->
                 <h2>{% trans "LGD Distribution" %}</h2>
-                <table>
+                <table  style="width: 80%; table-layout: fixed;  margin: 0 auto; ">
                     <thead>
                         <tr style="text-align: center;">
                             <th>{% trans "ID" %}</th>
@@ -209,7 +272,7 @@
                         {% for row in contextLGD %}
                         <tr>
                             <td style="text-align: center;">{{ row.id }}</td>
-                            <td style="text-align: center;">{{ row.LGD_distribution|floatformat:2 }}</td>
+                            <td style="text-align: center;">{{ row.LGD_distribution|floatformat:2 }} %</td>
                         </tr>
                         {% endfor %}
                     </tbody>

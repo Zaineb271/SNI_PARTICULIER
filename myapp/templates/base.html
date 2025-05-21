@@ -32,7 +32,7 @@
             opacity: 1;
             font-size: 13px;
             border-radius: 5px;
-            background: linear-gradient(145deg, #d3d3d3, #a9a9a9);
+            background: linear-gradient(145deg, #d3d3d3, white);
             margin-bottom: 2px;
             transition: all 0.3s ease;
             width: 270px;
@@ -246,11 +246,14 @@
                     <img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "Feature Selection" %}
                 </a>
             </li>
+            <!--
             <li class="nav-item {% if request.resolver_match.url_name == 'transition_matrix' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'transition_matrix' %}">
                     <img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "Transition Matrix" %}
                 </a>
             </li>
+            -->
+
             <li class="nav-item">
                 <a class="nav-link" href="#" id="modeling-link">
                     <img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "Modeling" %}
@@ -278,6 +281,43 @@
                     </li>
                 </ul>
             </li>
+             <li class="nav-item">
+                <a class="nav-link" href="#" id="score-link">
+                    <img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "Origination Score"%}
+                </a>
+                <ul class="submenu" id="scoreMenu">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'consultationOctroi' %}">
+                        <img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "Consultation Octroi" %}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'générerEtat' %}"><img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "Etat générer" %}</a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" id="vision-link">
+                    <img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "IFRS9 Vision" %}
+                </a>
+                <ul class="submenu {% if request.resolver_match.url_name == 'Staging IFRS9' or request.resolver_match.url_name == 'ifrs_client' %}show{% endif %}" id="visionMenu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Staging IFRS9' %}">
+                            <img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "Staging IFRS9" %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ifrs_client' %}">
+                            <img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "Client File" %}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+             <!--
+            <li class="nav-item {% if request.resolver_match.url_name == 'feature_selection' %}active{% endif %}">
+               <a class="nav-link" href="http://127.0.0.1:8080/overview/" target="_blank">
+                    <img src="/media/folder.gif" alt="{% trans 'Folder' %}" class="menu-icon"> {% trans "Client Corporate" %}
+                </a>
+            </li>
+             -->
+
         </ul>
         <img src="/media/unnamed.png" alt="{% trans 'Footer Logo' %}" class="navbar-image">
     </nav>
@@ -291,12 +331,37 @@
                 subMenu.classList.toggle("show");
             });
 
+
+            const visionLink = document.getElementById("vision-link");
+            const visionMenu = document.getElementById("visionMenu");
+
+            visionLink.addEventListener("click", function (event) {
+                event.preventDefault(); // empêche le comportement par défaut du lien
+                visionMenu.classList.toggle("show"); // ajoute ou retire la classe "show"
+            });
+
             const evaluationLink = document.getElementById("evaluation-link");
             const evaluationMenu = document.getElementById("evaluationMenu");
             evaluationLink.addEventListener("click", function(event) {
                 event.preventDefault();
                 evaluationMenu.classList.toggle("show");
+
             });
+
+            const scorelink = document.getElementById("score-link");
+
+            const scoreMenu = document.getElementById("scoreMenu");
+
+            scorelink.addEventListener("click",
+            function(event) {
+
+                event.preventDefault();
+
+                scoreMenu.classList.toggle("show");
+
+            });
+
+        
         });
     </script>
 

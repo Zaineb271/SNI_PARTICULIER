@@ -87,7 +87,7 @@
         text-align: left;
       }
       th {
-        background-color: #333;
+        background-color: #f2f2f2;
         color: #d4af37;
       }
       tr:nth-child(even) {
@@ -171,7 +171,7 @@
 
 {% block content %}
     <h1>{% trans "Portfolio Summary" %}</h1>
-    <table>
+    <table >
         <tr><td>{% trans "Number of Files" %}</td><td>{{ recap.nb_total_dossiers }}</td></tr>
         <tr><td>{% trans "Total EAD" %}</td><td>{{ recap.ead_total }}</td></tr>
         <tr><td>{% trans "Total ECL" %}</td><td>{{ recap.ecl_total }}</td></tr>
@@ -194,11 +194,9 @@
     {% endif %}
 
     {% if combined_list %}
-        <table style="width: 100%; 
-        margin: 20px 0; 
-        box-sizing: border-box; ">
+        <table style="width: 80%; table-layout: fixed;  margin: 0 auto; ">
             <thead>
-                <tr>
+                <tr style="text-align: center;">
                     <th>{% trans "ID" %}</th>
                     <th>{% trans "PD 2024" %}</th>
                     <th>{% trans "Risk Class" %}</th>
@@ -216,7 +214,7 @@
                         <td style="text-align: center;">{{ item.pd }} %</td>
                         <td style="text-align: center;">{{ item.level }}</td>
                         <td style="text-align: center;">{{ item.comment }}</td>
-                        <td style="text-align: center;">{{ item.lgd }}</td>
+                        <td style="text-align: center;">{{ item.lgd }} %</td>
                         <td style="text-align: center;">{{ item.ead }}</td>
                         <td style="text-align: center;">{{ item.ECL }}</td>
                         <td style="text-align: center;">{{ item.UL }}</td>
@@ -267,16 +265,14 @@
         <h1 style="text-align: center; margin-top: 50px;">{% trans "Risk Indicators" %}</h1>
 
         <!-- Deuxième tableau -->
-        <table style="width: 100%; 
-        margin: 20px 0; 
-        box-sizing: border-box; ">
+        <table style="width: 80%; table-layout: fixed;  margin: 0 auto; ">
             <thead>
                 <tr style="text-align: center;">
                     <th>{% trans "ID" %}</th>
-                    <th>{% trans "ECL" %}</th>
+                     <!-- <th>{% trans "ECL" %}</th>-->
                     <th>{% trans "Provisioning Rate" %}</th>
                     <th>{% trans "RWA" %}</th>
-                    <th>{% trans "UL" %}</th>
+                     <!-- <th>{% trans "UL" %}</th>-->
                     <th>{% trans "Capital to Reserve" %}</th>
                 </tr>
             </thead>
@@ -284,10 +280,10 @@
                 {% for item in indicators_page_obj %}
                     <tr>
                         <td style="text-align: center;">{{ item.id }}</td>
-                        <td style="text-align: center;">{{ item.ECL }}</td>
+                         <!--<td style="text-align: center;">{{ item.ECL }}</td>-->
                         <td style="text-align: center;">{{ item.taux_provisionnement }} %</td>
                         <td style="text-align: center;">{{ item.RWA }}</td>
-                        <td style="text-align: center;">{{ item.UL }}</td>
+                        <!-- <td style="text-align: center;">{{ item.UL }}</td>-->
                         <td style="text-align: center;">{{ item.fonds_propres }}</td>
                     </tr>
                 {% endfor %}

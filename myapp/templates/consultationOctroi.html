@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fiche Client</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+
+    <style>
+        h1 {
+            color: #f4c542;
+            text-align: center;
+            margin-bottom:
+                25px;
+            width:
+                100%;
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap:10px;
+            margin-bottom:30px;
+            width:100%;
+            padding:0 20px;
+            /* Optional padding for readability */
+        }
+        .client-id-input {
+            padding:10px;
+            font-size:1rem;
+            width:60%;
+            border:1px solid #ccc;
+            border-radius:6px;
+            margin-right:10px;
+        }
+        button[type="submit"] {
+            background-color: #f4c542;
+            color: #fff;
+            padding:10px 20px;
+            border: none;
+            border-radius:6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button[type="submit"]:hover {
+            background-color: #e1b52e;
+        }
+        .warning {
+            margin-right:10px;
+            color: #cc0000;
+            font-style: italic;
+            font-size: 1rem;
+            margin-top:20px;
+            width:100%;
+        }
+        .client-results {
+            width:100%;
+            margin-left:100px;
+            background-color: #fff;
+            border:1px solid #ddd;
+            box-shadow:0 2px 8px rgba(0,0, 0,0.05);
+            border-radius:8px;
+        }
+        .client-results h2 {
+            color: #2c3e50;
+            font-size:  1.5em;
+            margin-bottom:12px;
+            border-bottom:2px solid #f4c542;
+            padding-bottom:5px;
+            width:100%;
+        }
+        .client-results p {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap:12px;
+            width:100%;
+        }
+        .client-results strong {
+            font-weight:600;
+            color: #333;
+            flex: 0 0 180px;
+            text-align: right;
+
+        }
+        .client-results input[type="text"] {
+            padding:8px;
+            border:1px solid #ccc;
+            border-radius:6px;
+            font-size:1rem;
+            background-color: #f9f9f9;
+
+            flex:
+                1;
+
+            max-width:
+                300px;
+
+            transition: border-color 0.3s ease;
+
+        }
+
+
+
+        .client-results input[readonly] {
+
+            background-color: #f0f0f0;
+
+            cursor: not-allowed;
+
+            color: #555;
+
+        }
+
+
+
+        .client-results input[type="text"]:hover:not([readonly]),
+
+        .client-results input[type="text"]:focus {
+
+            border-color: #f4c542;
+
+            outline: none;
+
+        }
+
+
+
+        .client-results section {
+
+            padding:
+                15px;
+
+            border-radius:
+                6px;
+
+            margin-bottom:
+                15px;
+
+            background-color: #fafafa;
+
+            width:
+                100%;
+
+        }
+
+
+
+        .custom-modal-width {
+
+            max-width:
+                90% !important;
+
+            width:
+                90% !important;
+
+        }
+
+
+
+        @media (max-width: 600px) {
+
+            .client-results p {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+            }
+
+
+
+            .client-results strong {
+
+                flex: none;
+
+                text-align: left;
+
+                margin-bottom:
+                    4px;
+
+            }
+
+
+
+            .client-results input[type="text"] {
+
+                max-width: none;
+
+                width:
+                    100%;
+
+            }
+
+        }
+    </style>
+
+</head>
+
+
+
+<body>
+
+    {% extends 'base.html' %}
+    {% block title %}Détails Clients{% endblock %}
+
+    {% block content %}
+    <div>
+        <h1>Détails Clients</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="id" class="client-id-input" placeholder="Entrer ID du client" required />
+            <button type="submit">Rechercher</button>
+        </form>
+        {% if message %}
+        <p>{{ message }}</p>
+        {% elif not top_clients %}
+        <p class="warning">Veuillez fournir un ID de client.</p>
+        {% endif %}
+
+
+        {% if client %}
+        <div class="client-results">
+            <table class="table table-striped table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Identification</th>
+                        <th>PD</th>
+                        <th>Classe du risque</th>
+                        <th>Décision</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><button class="btn" data-toggle="modal" data-target="#editIdModal">
+                                <i class="fas fa-edit"></i>
+                            </button></td>
+                        <td>{{ client.id }}</td>
+                        <td>
+                            {{ client.pd|floatformat:2}}%
+                        </td>
+                        <td>
+                            {{ client.classe }}
+                        </td>
+                        <td>
+                            {{ client.decision }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Modal Identification -->
+        <div class="modal fade" id="editIdModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable custom-modal-width" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 class="mb-3">Données Client</h6>
+                        <form>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>ID
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.id}}" readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Montant accordé
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.montant_accorde}}"
+                                            readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Taux appliqué
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.taux_applique}}"
+                                            readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Mensualité
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.mensualite}}" readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Revenus annuels
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.revenus_annuels}}"
+                                            readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Encours actuel
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.encours_actuel}}"
+                                            readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Principal remboursé
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.principal_rembourse}}"
+                                            readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Remboursement total
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.remboursement_total}}"
+                                            readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Demandes de crédit (6 mois)
+                                        </label>
+                                        <input type="text" class="form-control"
+                                            value="{{ client.demandes_credit_6mois}}" readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Recouvrement sur impayés
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.recouvrement_impayes}}"
+                                            readonly>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h6 class="mb-3">Résultat Scoring</h6>
+                                <div class="row justify-content-start">
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>PD
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.pd|floatformat:2}}%"
+                                            readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Classe de risque
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.classe}}" readonly>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <label>Décision
+                                        </label>
+                                        <input type="text" class="form-control" value="{{ client.decision}}" readonly>
+                                    </div>
+                                </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Enregistrer</button>
+                        <button class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        {% endif %}
+
+
+
+    </div>
+    {% endblock %}
+</body>
+
+</html>

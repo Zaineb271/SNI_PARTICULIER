@@ -81,7 +81,7 @@
             text-align: left;
         }
         th {
-            background-color: #333;
+             background-color: #f2f2f2;
             color: #d4af37;
         }
         tr:nth-child(even) {
@@ -113,10 +113,10 @@
     {% block content %}
     <div >
       <h1 style="color: #d4af37 !important; text-align: center">{% trans "Feature Selection" %}</h1>
-      {% if current_column %}
+      <!--  {% if current_column %}
       <div id="cible">{% trans "Current Target Column" %}: {{ current_column }}</div>
       {% endif %}
-
+    -->
       <form method="post">
         {% csrf_token %}
         <button type="submit">{% trans "Run Calculations" %}</button>
@@ -125,20 +125,20 @@
       <div class="alert alert-info" role="alert">{{ message }}</div>
       {% endif %} 
       {% if anova_results is not None %}
-      <h2>{% trans "Dependency Analysis between Categorical Variables and Target Variable" %}</h2>
+      <h2 style="text-align:center;">{% trans "Dependency Analysis between Categorical Variables and Target Variable" %}</h2>
       <hr/>
       <p>
         {% trans "The ANOVA test is used to study the dependency relationship of a quantitative variable to a qualitative variable." %}
       </p>
       <p>
-        {% trans "P-value > 0.05: acceptance of H0, so the default does not depend on the variable. This variable is not important in prediction." %}
+        {% trans "P-value <  0.05: acceptance of H0, so the default does not depend on the variable. This variable is not important in prediction." %}
       </p>
       <p>
-        {% trans "P-value < 0.05: rejection of H0, so the default criterion depends on the variable. This variable is important in prediction." %}
+        {% trans "P-value > 0.05: rejection of H0, so the default criterion depends on the variable. This variable is important in prediction." %}
       </p>
-      <table>
+      <table style="width: 100%; table-layout: fixed; ">
         <thead>
-          <tr style="text-align: center">
+          <tr style="text-align: center; width:25%; ">
             <th>{% trans "Variables" %}</th>
             <th>{% trans "P_value" %}</th>
             <th>{% trans "Independence" %}</th>
@@ -147,10 +147,10 @@
         </thead>
         <tbody>
           {% for row in anova_results.itertuples %}
-          <tr style="text-align:center;">
-            <td>{{ row.Feature }}</td>
-            <td>{{ row.P_value|floatformat:2 }}</td>
-            <td>{{ row.Independence }}</td>
+          <tr style="text-align:center; width: 25%;">
+            <td style="text-align:center; width: 25%;">{{ row.Feature }}</td>
+            <td style="text-align:center; width: 25%;">{{ row.P_value|floatformat:2 }}</td>
+            <td style="text-align:center; width: 25%;">{{ row.Independence }}</td>
             <td>
               <form method="post" action="{% url 'feature_selection' %}">
                 {% csrf_token %}
@@ -164,7 +164,7 @@
       </table>
       {% endif %} 
       {% if iv_results is not None %}
-      <h2>{% trans "Dependency Analysis between Numerical Variables and Target Variable" %}</h2>
+      <h2 style="text-align:center;">{% trans "Dependency Analysis between Numerical Variables and Target Variable" %}</h2>
       <p>
         {% trans "Information Value is a widely used technique in variable selection." %}
       </p>
@@ -174,9 +174,9 @@
       <p>
         {% trans "We eliminate variables with an IV < 0.1. For strong predictive power, IV > 0.3 is required." %}
       </p>
-      <table>
+      <table  style="width: 100%; table-layout: fixed; ">
         <thead>
-          <tr style="text-align: center">
+          <tr style="text-align: center; width: 25%;">
             <th>{% trans "Variables" %}</th>
             <th>{% trans "IV" %}</th>
             <th>{% trans "Category" %}</th>
@@ -185,11 +185,11 @@
         </thead>
         <tbody>
           {% for row in iv_results.itertuples %}
-          <tr style="text-align:center;">
-            <td>{{ row.Feature }}</td>
-            <td>{{ row.IV|floatformat:2 }}</td>
-            <td>{{ row.Category }}</td>
-            <td>
+          <tr style="text-align:center; width: 25%;">
+            <td style="text-align:center; width: 25%;">{{ row.Feature }}</td>
+            <td style="text-align:center; width: 25%;">{{ row.IV|floatformat:2 }}</td>
+            <td style="text-align:center;width: 25%;">{{ row.Category }}</td>
+            <td style="text-align:center;width: 25%;">
               <form method="post" action="{% url 'feature_selection' %}">
                 {% csrf_token %}
                 <input type="hidden" name="column_to_remove" value="{{ row.Feature }}" />
@@ -211,20 +211,20 @@
 
       {% if correlated_pairs %}
       <h2>{% trans "Correlated Variables" %}</h2>
-      <table>
+      <table style="width: 100%; table-layout: fixed; ">
         <thead>
-          <tr style="text-align: center">
+          <tr style="text-align: center ; width: 25%;">
             <th>{% trans "Variables" %}</th>
             <th>{% trans "Correlation" %}</th>
-            <th>{% trans "Column to Delete" %}</th>
+            <th>{% trans "Variable to Delete" %}</th>
           </tr>
         </thead>
         <tbody>
           {% for pair in correlated_pairs %}
           <tr>
-            <td>{{ pair.var1 }} ({{ pair.iv1 }}) | {{ pair.var2 }} ({{ pair.iv2 }})</td>
-            <td>{{ pair.correlation }}</td>
-            <td>
+            <td style="text-align:center; width: 25%;">{{ pair.var1 }} ({{ pair.iv1 }}) | {{ pair.var2 }} ({{ pair.iv2 }})</td>
+            <td style="text-align:center;width: 25%;">{{ pair.correlation }}</td>
+            <td style="width: 25%;">
               <form method="post" action="{% url 'feature_selection' %}" style="display:inline;">
                 {% csrf_token %}
                 <select name="column_to_remove">

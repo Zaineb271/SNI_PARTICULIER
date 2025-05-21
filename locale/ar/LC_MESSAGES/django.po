@@ -396,3 +396,57 @@ msgstr "للمراقبة"
 
 msgid "Excellent"
 msgstr "ممتاز"
+
+msgid "Enter Client ID"
+msgstr "أدخل معرف العميل"
+
+msgid "Please provide a valid Client ID."
+msgstr "يرجى تقديم معرف عميل صالح."
+
+msgid "General Information"
+msgstr "المعلومات العامة"
+
+msgid "Annual Revenue"
+msgstr "الإيرادات السنوية"
+
+msgid "Central Bank Class"
+msgstr "فئة البنك المركزي"
+
+msgid "Financing Type"
+msgstr "نوع التمويل"
+
+msgid "Engagement Details"
+msgstr "تفاصيل الالتزام"
+
+msgid "Loan Amount"
+msgstr "مبلغ القرض"
+
+msgid "Repayment Term"
+msgstr "مدة السداد"
+
+msgid "Effective Interest Rate"
+msgstr "معدل الفائدة الفعلي"
+
+msgid "Monthly Payment"
+msgstr "الدفعة الشهرية"
+
+msgid "Repayment Capacity"
+msgstr "قدرة السداد"
+
+msgid "Remaining Capital Due"
+msgstr "الرأسمال المتبقي المستحق"
+
+msgid "Principal Paid"
+msgstr "الأصل المدفوع"
+
+msgid "Interest Paid"
+msgstr "الفوائد المدفوعة"
+
+msgid "Total Repayment"
+msgstr "إجمالي السداد"
+
+msgid "Regulatory Indicators"
+msgstr "المؤشرات التنظيمية"
+
+msgid "Capital Reserves Required"
+msgstr "الاحتياطيات الرأسمالية المطلوبة"

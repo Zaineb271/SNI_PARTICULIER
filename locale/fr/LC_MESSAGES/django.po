@@ -208,9 +208,6 @@ msgstr "Courbe ROC"
 msgid "Estimated Default Probability for 2024"
 msgstr "Probabilité de défaut estimée pour 2024"
 
-msgid "ID"
-msgstr "ID"
-
 msgid "PD 2024"
 msgstr "PD 2024"
 
@@ -398,3 +395,60 @@ msgstr "A surveiller"
 
 msgid "Excellent"
 msgstr "Excellent"
+
+msgid "Enter Client ID"
+msgstr "Entrer ID du client"
+
+msgid "Please provide a valid Client ID."
+msgstr "Veuillez fournir un ID de client valide."
+
+msgid "General Information"
+msgstr "Informations Générales"
+
+msgid "ID"
+msgstr "Identifiant"
+
+msgid "Annual Revenue"
+msgstr "Revenus annuels"
+
+msgid "Central Bank Class"
+msgstr "Classe Banque Centrale"
+
+msgid "Financing Type"
+msgstr "Type de financement"
+
+msgid "Engagement Details"
+msgstr "Détails engagement"
+
+msgid "Loan Amount"
+msgstr "Montant crédit"
+
+msgid "Repayment Term"
+msgstr "Remboursement"
+
+msgid "Effective Interest Rate"
+msgstr "Taux d'intérêt effectif"
+
+msgid "Monthly Payment"
+msgstr "Mensualité"
+
+msgid "Repayment Capacity"
+msgstr "Capacité de remboursement"
+
+msgid "Remaining Capital Due"
+msgstr "Capital restant dû"
+
+msgid "Principal Paid"
+msgstr "Principal Payé"
+
+msgid "Interest Paid"
+msgstr "Intérêts Payés"
+
+msgid "Total Repayment"
+msgstr "Total remboursement"
+
+msgid "Regulatory Indicators"
+msgstr "Indicateurs réglementaires"
+
+msgid "Capital Reserves Required"
+msgstr "Fonds propres à réserver"

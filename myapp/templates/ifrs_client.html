@@ -83,8 +83,8 @@
       }
 
       .client-results {
-        width: 100%;
-        margin: 0 auto;
+        width: 100%; /* Adjusted to fit within container */
+        
         padding: 25px;
         background-color: #fff;
         border: 1px solid #ddd;
@@ -268,101 +268,36 @@
                     <input type="text" id="client-id" value="{{ client.id }}" readonly />
                 </div>
                 <div class="field-pair">
-                    <label for="annual-inc">{% trans "Annual Revenue" %} :</label>
-                    <input type="text" id="annual-inc" value="{{ client.annual_inc }}" readonly />
+                    <label for="segment">{% trans "Segment" %} :</label>
+                    <input type="text" id="segment" value="Retail" readonly />
                 </div>
                 <div class="field-pair">
-                    <label for="grade2024">{% trans "Central Bank Class" %} :</label>
-                    <input type="text" id="grade2024" value="{{ client.grade2024 }}" readonly />
-                </div>
-                <div class="field-pair">
-                    <label for="type">{% trans "Financing Type" %} :</label>
-                    <input type="text" id="type" value="{{ client.type }}" readonly />
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <h2>{% trans "Engagement Details" %}</h2>
-            <div class="row">
-                <div class="field-pair">
-                    <label for="loan-amnt">{% trans "Loan Amount" %} :</label>
-                    <input type="text" id="loan-amnt" value="{{ client.loan_amnt }}" readonly />
-                </div>
-                <div class="field-pair">
-                    <label for="term">{% trans "Repayment Term" %} :</label>
-                    <input type="text" id="term" value="{{ client.term }}" readonly />
-                </div>
-                <div class="field-pair">
-                    <label for="int-rate">{% trans "Effective Interest Rate" %} :</label>
-                    <input type="text" id="int-rate" value="{{ client.int_rate }}" readonly />
-                </div>
-                <div class="field-pair">
-                    <label for="installment">{% trans "Monthly Payment" %} :</label>
-                    <input type="text" id="installment" value="{{ client.installment }}" readonly />
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <h2>{% trans "Repayment Capacity" %}</h2>
-            <div class="row">
-                <div class="field-pair">
-                    <label for="out-prncp">{% trans "Remaining Capital Due" %} :</label>
-                    <input type="text" id="out-prncp" value="{{ client.out_prncp }}" readonly />
-                </div>
-                <div class="field-pair">
-                    <label for="total-rec-prncp">{% trans "Principal Paid" %} :</label>
-                    <input type="text" id="total-rec-prncp" value="{{ client.total_rec_prncp }}" readonly />
-                </div>
-                <div class="field-pair">
-                    <label for="total-rec-int">{% trans "Interest Paid" %} :</label>
-                    <input type="text" id="total-rec-int" value="{{ client.total_rec_int }}" readonly />
-                </div>
-                <div class="field-pair">
-                    <label for="total-pymnt">{% trans "Total Repayment" %} :</label>
-                    <input type="text" id="total-pymnt" value="{{ client.total_pymnt }}" readonly />
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <h2>{% trans "Regulatory Indicators" %}</h2>
-            <div class="row">
-                <div class="field-pair">
-                    <label for="pd">{% trans "PD" %} :</label>
-                    <input type="text" id="pd" value="{{ client.pd }}%" readonly />
+                    <label for="pd-ttc">{% trans "PD TTC" %} :</label>
+                    <input type="text" id="pd-ttc" value="{{ client.PD|floatformat:2 }} %" readonly />
                 </div>
                 <div class="field-pair">
                     <label for="lgd">{% trans "LGD" %} :</label>
-                    <input type="text" id="lgd" value="{{ client.lgd }}" readonly />
+                    <input type="text" id="lgd" value="{{ client.LGD }} %" readonly />
                 </div>
                 <div class="field-pair">
                     <label for="ead">{% trans "EAD" %} :</label>
-                    <input type="text" id="ead" value="{{ client.ead }}" readonly />
+                    <input type="text" id="ead" value="{{ client.EAD }}" readonly />
+                </div>
+                <div class="field-pair">
+                    <label for="staging">{% trans "Staging" %} :</label>
+                    <input type="text" id="staging" value="{{ client.stage }}" readonly />
+                </div>
+                <div class="field-pair">
+                    <label for="pd-lifetime">{% trans "PD Life Time" %} :</label>
+                    <input type="text" id="pd-lifetime" value="{{ client.PD|floatformat:2 }} %" readonly />
                 </div>
                 <div class="field-pair">
                     <label for="ecl">{% trans "ECL" %} :</label>
                     <input type="text" id="ecl" value="{{ client.ECL }}" readonly />
                 </div>
-            </div>
-            <div class="row">
                 <div class="field-pair">
-                    <label for="ul">{% trans "UL" %} :</label>
-                    <input type="text" id="ul" value="{{ client.UL }}" readonly />
-                </div>
-                <div class="field-pair">
-                    <label for="rwa">{% trans "RWA" %} :</label>
-                    <input type="text" id="rwa" value="{{ client.RWA }}" readonly />
-                </div>
-                <div class="field-pair">
-                    <label for="fonds-propres">{% trans "Capital Reserves Required" %} :</label>
-                    <input type="text" id="fonds-propres" value="{{ client.fonds_propres }}" readonly />
-                </div>
-                <!-- Placeholder for the 4th field to maintain layout -->
-                <div class="field-pair">
-                    <label> </label>
-                    <input type="text" value="" readonly style="display: none;" />
+                    <label for="nombre-contrats">{% trans "Nombre de contrats financés" %} :</label>
+                    <input type="text" id="nombre-contrats" value="1" readonly />
                 </div>
             </div>
         </section>
